@@ -1,0 +1,86 @@
+{
+  "geometry": {
+    "model_id": "Qwen/Qwen3-4B",
+    "hidden_size": 2560,
+    "num_hidden_layers": 36,
+    "num_attention_heads": 32,
+    "num_key_value_heads": 8,
+    "head_dim": 128,
+    "rope_theta": 1000000.0,
+    "rope_scaling": {
+      "rope_theta": 1000000,
+      "rope_type": "default"
+    },
+    "max_position_embeddings": 40960,
+    "sliding_window": null,
+    "vocab_size": 151936,
+    "tie_word_embeddings": true,
+    "torch_dtype": "torch.bfloat16",
+    "gqa_ratio": 4.0,
+    "kv_bytes_per_token": 147456
+  },
+  "git_commit": "fa2c04e-dirty",
+  "timestamp_utc": "2026-09-07T12:50:07+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  },
+  "model_id": "Qwen/Qwen3-4B",
+  "tokenizer": {
+    "class": "Qwen2Tokenizer",
+    "vocab_size": 151643,
+    "len_tokenizer": 151669,
+    "model_max_length": 131072,
+    "eos_token_id": 151645,
+    "pad_token_id": 151643,
+    "has_chat_template": true,
+    "probe_text": "The replacement assembly is QZ-8471-BX; digest 9f3a1c0d, /var/opt/x.log",
+    "probe_n_tokens": 30,
+    "probe_roundtrip_exact": true,
+    "chat_template_nothink": "<|im_start|>user\nhi<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
+  },
+  "kv_budget": {
+    "bytes_per_token_bf16": 147456,
+    "gib_at_1024": 0.1406,
+    "gib_at_2048": 0.2812,
+    "gib_at_4096": 0.5625,
+    "gib_at_8192": 1.125,
+    "gib_at_16384": 2.25,
+    "gib_at_32768": 4.5
+  },
+  "runtime": {
+    "device": "mps",
+    "dtype": "torch.bfloat16",
+    "cache_class": "DynamicCache",
+    "cache_layer_class": "DynamicLayer",
+    "n_cache_layers": 36,
+    "cache_seq_length": 79,
+    "key_shape": [
+      1,
+      8,
+      79,
+      128
+    ],
+    "key_dtype": "torch.bfloat16",
+    "logits_shape": [
+      1,
+      151936
+    ],
+    "attn_implementation": "sdpa",
+    "rotary_class": "Qwen3RotaryEmbedding",
+    "rope_inv_freq_shape": [
+      64
+    ],
+    "n_params": 4022468096,
+    "memory": {
+      "mps_current_allocated_bytes": 8147943680,
+      "mps_driver_allocated_bytes": 8374665216
+    },
+    "smoke_answer": "4",
+    "smoke_ttft_s": 0.16018925001844764
+  }
+}

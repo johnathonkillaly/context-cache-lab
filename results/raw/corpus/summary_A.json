@@ -1,0 +1,55 @@
+{
+  "draw": "A",
+  "seed": 11,
+  "tokenizer_model": "Qwen/Qwen3-4B",
+  "n_documents": 40,
+  "n_questions": 360,
+  "chunk_tokens": 256,
+  "lengths": {
+    "1024": {
+      "n_docs": 8,
+      "mean_actual_tokens": 1095.8,
+      "min": 1066,
+      "max": 1176,
+      "n_chunks": 4
+    },
+    "2048": {
+      "n_docs": 8,
+      "mean_actual_tokens": 2117.0,
+      "min": 2099,
+      "max": 2138,
+      "n_chunks": 8
+    },
+    "4096": {
+      "n_docs": 8,
+      "mean_actual_tokens": 4224.6,
+      "min": 4208,
+      "max": 4251,
+      "n_chunks": 16
+    },
+    "8192": {
+      "n_docs": 8,
+      "mean_actual_tokens": 8439.5,
+      "min": 8417,
+      "max": 8461,
+      "n_chunks": 32
+    },
+    "16384": {
+      "n_docs": 8,
+      "mean_actual_tokens": 16882.0,
+      "min": 16865,
+      "max": 16893,
+      "n_chunks": 64
+    }
+  },
+  "git_commit": "fa2c04e-dirty",
+  "timestamp_utc": "2026-09-07T12:59:49+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  }
+}
