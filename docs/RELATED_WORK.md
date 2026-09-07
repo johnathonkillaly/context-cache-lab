@@ -1,6 +1,8 @@
 # Related Work
 
-**Status:** literature survey completed 2026-09-07, before any code was written.
+**Status:** §1–2 and §4–7 written 2026-09-07 **before any code**. §3 (the quantization /
+precision-axis literature) added later the same day, after Stage 2a and **before** the
+Stage 2b compressor was written.
 
 **Bottom line up front: the central idea of this repo is not novel.** Independently
 compiling context chunks into compressed, composable, model-readable state — with a
@@ -12,7 +14,7 @@ this document, not in the core hypothesis.
 
 This project should therefore be understood primarily as a **replication and
 measurement study on Apple Silicon**, with a small number of genuinely open questions
-attached. See [§6 Where the gaps actually are](#6-where-the-gaps-actually-are).
+attached. See [§7 Where the gaps actually are](#7-where-the-gaps-actually-are).
 
 ---
 
@@ -201,7 +203,158 @@ inference. **Exact fallback:** lossless raw tokens retained and selectively re-i
 
 ---
 
-## 3. Adjacent lines worth knowing
+## 3. Two orthogonal compression axes — and where the quantization literature sits
+
+Added 2026-09-07, after Stage 2a, before the Stage 2b compressor was written.
+
+The KV-compression literature contains two things that are easy to conflate and must be
+kept apart in this repo, because mixing them would make a Stage 2b result uninterpretable:
+
+**Axis A — state-count compression.** `N` ordinary context positions → `M` learned memory
+positions, `M ≪ N`. This changes *how many things the target attends over*, so it reduces
+attention work and active context positions. C²KV, Gist/ICAE/500xCompressor, Cartridges
+and LycheeMemory all live here. **This is Stage 2b.**
+
+**Axis B — representation precision.** Each stored state goes from BF16 to INT8/INT4/INT2
+or a vector-quantized code. This changes *bytes per state*, so it reduces memory footprint
+and bandwidth, but the target still attends over the same number of positions.
+**Everything in this section is Axis B.** It is deferred to Stage 2c and is not to be
+combined with Stage 2b — a quality change would otherwise be unattributable between "the
+learned state is lossy" and "the quantizer is lossy".
+
+The four systems below all reduce **bits per entry only**; none of them reduces the number
+of entries. None of these ideas is ours, and this repo has implemented none of them.
+
+| System | Year | Axis | Mechanism | Bits reached | Needs training? |
+|---|---|---|---|---|---|
+| **CommVQ** | ICML 2025 | B | additive VQ + RoPE-commutative codebook, EM-learned | 2-bit solid, **1-bit with minimal loss** | codebook fit on calibration data |
+| **QJL** | AAAI/ICLR 2025 | B | JL random projection then **sign** quantization | 1-bit component; 3-bit end-to-end lossless | no (data-oblivious projection) |
+| **PolarQuant** | 2025 / NeurIPS 2025 | B | random preconditioning + polar transform, quantize **angles** | >4.2× compression | no |
+| **QuantSpec** | 2025 | B | **hierarchical** INT4/INT8 cache, one layout serves both tiers | INT4 draft / INT8 target | no |
+
+### 3.1 CommVQ — Commutative Vector Quantization
+
+[arXiv:2506.18879](https://arxiv.org/abs/2506.18879) · [ICML 2025](https://proceedings.mlr.press/v267/li25du.html) · [code](https://github.com/UMass-Embodied-AGI/CommVQ)
+
+**Additive/vector quantization.** A lightweight encoder plus a learned codebook compress
+whole `d`-dimensional key and value vectors — not individual scalars — and decoding is a
+single matrix multiply. Encoder and codebook are jointly fit to minimize reconstruction
+MSE against the original vectors over a calibration set, using **EM**: the E-step assigns
+vectors to nearest centers, the M-step updates codebook matrices by closed-form MSE
+minimization.
+
+**The RoPE-commutative construction — the part worth understanding.** RoPE is
+block-diagonal, acting as independent 2×2 rotations on coordinate pairs. CommVQ constrains
+each 2×2 sub-codebook `C` to satisfy `R C = C R` for every rotation block `R`. The
+matrices with that property are exactly those of the form
+
+```
+[  x   y ]
+[ -y   x ]
+```
+
+which is the matrix representation of multiplication by a complex number — a scaling
+composed with a rotation. Such maps commute with rotation by construction.
+
+**Why commutativity buys anything:** if the codebook commutes with RoPE, you can rotate
+the *query* once and multiply it against the *quantized codes directly*, instead of
+dequantizing the whole cache to full precision at every decode step. The paper reports
+this drops decode cost from `O(dN_c N)` to `O(N_c N + d N_c)`. Note the asymmetry:
+**the commutative constraint is needed only for keys**, because RoPE only touches the
+query–key interaction. Values use ordinary additive quantization.
+
+**Results.** 87.5% FP16 KV reduction at 2-bit while beating prior KV quantization, and
+1-bit with minimal degradation — enough to run LLaMA-3.1-8B at 128K context on a single
+RTX 4090. Evaluated on long-context benchmarks and GSM8K.
+
+**What this means for *our* design — stated carefully, because the connection is easy to
+oversell.** CommVQ's commutativity solves a *decoding-efficiency* problem (avoid
+materializing the cache), **not** a composition problem. Our Stage 2b already gets
+position-freedom for free by storing `Z` **pre-RoPE**, so we do not need commutativity to
+compose chunks. Where it becomes relevant is **Stage 2c**: if we later quantize the stored
+pre-RoPE state, constraining that transform to the `[[x, y], [−y, x]]` block form would
+make the quantizer **RoPE-equivariant**, so re-applying position at composition time still
+commutes with the codec and the two compression axes stay independent. That is a design
+constraint worth inheriting later; it is not a reason to change Stage 2b.
+
+### 3.2 QJL — 1-Bit Quantized Johnson–Lindenstrauss Transform
+
+[arXiv:2406.03482](https://arxiv.org/abs/2406.03482) · [code](https://github.com/amirzandieh/QJL)
+
+**Geometric preconditioning then extreme quantization.** `H_S(k) := sign(S k)` — project
+onto a random subspace with a JL matrix `S`, then keep only the **sign** of each
+coordinate. The JL lemma guarantees the projected inner products remain an unbiased,
+low-distortion estimator of the originals, so attention scores survive.
+
+**Why transforming before quantizing helps — the generalizable lesson.** Standard
+quantizers must store a zero point and scale per block in full precision, which adds 1–2
+bits per number and is pure overhead. Worse, key embeddings have **outlier coordinates**
+that force a wide scale and waste the available levels. A random projection **spreads
+outlier energy across all coordinates**, so the projected distribution is well-conditioned
+and needs no per-channel normalization and no stored constants at all. QJL uses an
+**asymmetric estimator**: quantize one side, leave the other as an unquantized JL
+projection, which is unbiased with minimal distortion. Orthogonalized JL transforms improve
+it further.
+
+**Results.** 3 bits per number with no accuracy drop versus exact FP16, >5× KV memory
+reduction, faster runtime, on Llama-2/Llama-3 including GQA models.
+
+**Relevance to us:** this is the cleanest statement of *why* the deferred
+Hadamard/orthogonal-rotation idea in `FUTURE_IDEAS.md` might pay off — and equally, why it
+pays off **only through a quantizer**. A rotation is information-preserving; it adds
+nothing on its own. It earns its keep by making a representation *quantizable*.
+
+### 3.3 PolarQuant — polar transformation
+
+[arXiv:2502.02617](https://arxiv.org/pdf/2502.02617) · [arXiv:2502.00527, NeurIPS 2025](https://arxiv.org/html/2502.00527) · [code](https://github.com/ericshwu/PolarQuant)
+
+Two papers share this name and repo; they are complementary.
+
+**Random preconditioning + polar transform.** Group coordinate pairs into 2D polar
+`(radius, angle)`, then quantize the **angles**. Applied recursively `log₂ d` times — the
+polar transform is re-applied to the radii — leaving one final radius and a collection of
+angle vectors.
+
+**The outlier story.** After random preconditioning the angle distribution becomes tightly
+concentrated with an **analytically computable** form. That flatness is what removes
+outliers and, as in QJL, eliminates the need to store per-block normalization constants.
+The authors connect this explicitly to using random Hadamard matrices as preconditioners
+before quantizing attention embeddings.
+
+**A RoPE-specific observation worth remembering.** The NeurIPS paper notes that key
+outliers typically appear in **only one of the two dimensions that RoPE rotates together**.
+Viewed as 2D vectors those pairs show smooth, organized radius/angle structure, which
+converts a channel-wise outlier problem into a well-behaved polar one. This is the same
+2×2 RoPE block structure CommVQ exploits algebraically, seen from a distributional angle.
+
+**Online suitability.** Decoding turns the query–key inner product into a **table lookup**,
+with a Triton kernel for Llama and Qwen2. >4.2× compression at best-in-class quality.
+
+### 3.4 QuantSpec — hierarchical KV, ignoring the speculative-decoding half
+
+[arXiv:2502.10424](https://arxiv.org/abs/2502.10424) · [Apple ML Research](https://machinelearning.apple.com/research/quantspec)
+
+**Only the cache-layout idea is in scope here. The self-speculative decoding component is
+explicitly not part of Stage 2b and is not being adopted.**
+
+**Hierarchical KV representation.** The naive way to run a low-precision draft alongside a
+full-precision target is to keep *two* caches, which wastes memory and forces on-the-fly
+quantization. QuantSpec instead stores **one hierarchical cache**: an INT4 tensor serves
+the low-precision tier directly, and **additional residual bits** reconstruct an INT8 view
+for the high-fidelity tier. Switching tiers costs no re-quantization because the low-
+precision view is a prefix of the stored representation rather than a separate copy.
+
+They also keep a small **full-precision buffer** to handle rollback correctly.
+
+**Why it is recorded here.** The residual-tier layout — *one artifact, cheap coarse view,
+optional refinement* — is structurally the same idea as the multi-fidelity page sketched
+in `FUTURE_IDEAS.md` (`Z_low` + `Z_residual` + exact `C_i`). QuantSpec does it in the
+bit-width dimension for a draft model; the page idea would do it across fidelity tiers for
+a memory hierarchy. **The idea of a residual higher-fidelity tier is theirs, not ours**;
+what would be ours, if anything, is applying it to a content-addressed context page with a
+lossless raw-token tier at the bottom.
+
+## 4. Adjacent lines worth knowing
 
 **Position-independent caching (PIC).** The systems line that most resembles our Stage 3
 control conditions. `PromptCache` (MLSys 2024) first treated the KV cache as an
@@ -266,7 +419,7 @@ measured against exact prefix caching, not only against cold native prefill.
 
 ---
 
-## 4. What is clearly published (we must not claim these)
+## 5. What is clearly published (we must not claim these)
 
 1. Independently prefilling chunks and composing their compressed KV at inference — **C²KV**.
 2. Keeping the target model frozen and training only a small sidecar with compression
@@ -281,7 +434,7 @@ measured against exact prefix caching, not only against cold native prefill.
    (RadixAttention). **The hash is an ID, not a contribution.**
 10. Compression ratios of 4–16× with graceful degradation on semantic benchmarks — **C²KV**.
 
-## 5. What this repo adds that is genuinely ours (all of it small)
+## 6. What this repo adds that is genuinely ours (all of it small)
 
 These are *methodological* and *measurement* contributions, not architectural ones:
 
@@ -305,7 +458,7 @@ These are *methodological* and *measurement* contributions, not architectural on
   uniformly. Equal-token-budget raw context in particular is the control that most often
   goes missing in this literature.
 
-## 6. Where the gaps actually are
+## 7. Where the gaps actually are
 
 Honest assessment of what remains unexplored after the survey above:
 

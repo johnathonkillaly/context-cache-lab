@@ -54,8 +54,8 @@ compile-once/amortize economics. [Landmark Attention
 attention.
 
 [`docs/RELATED_WORK.md`](docs/RELATED_WORK.md) was written **before any code**, and lists
-what is published (§4) separately from the small set of things this repo actually adds
-(§5) and the genuine remaining gaps (§6). Stages 1–4 are best understood as *replicating
+what is published (§5) separately from the small set of things this repo actually adds
+(§6) and the genuine remaining gaps (§7). Stages 1–4 are best understood as *replicating
 C²KV's core claim on Apple Silicon with tighter cost accounting.*
 
 ## Method commitments

@@ -225,8 +225,82 @@ Evaluated on **corpus draw B (held out)**, run once.
 - `COMPILED` ≈ `RANDOM` → the carrier holds no information.
 - `COMPILED` ≈ `SHUFFLE` at all ratios → position is unused; composition is a bag of
   chunks and long-range composition cannot work.
+  *(Amended 2026-09-07 after Stage 2a: a **KV-order** shuffle is a provable no-op and
+  must not be used here. Use text-level chunk reordering, which itself costs only ~5
+  points natively — so this criterion is weak evidence either way and is demoted to
+  informational.)*
 - `COMPILED` < `BUDGET` at every ratio → the compressor is worse than truncation.
 - `NOCTX` high on exact classes → corpus contaminated; regenerate before anything else.
+
+---
+
+## 7b. Stage 2b gate — FROZEN 2026-09-07, before the compressor was written
+
+Stage 2b asks one question:
+
+> **Does an approximate representation of ALL chunks beat an exact representation of 1/r
+> of the context?**
+
+That makes `BUDGET` — not `NOCTX` — the primary comparator. Thresholds are set against
+the score scales already measured on draw A, so they are calibrated rather than invented:
+
+| reference (draw A, `clean_hit`) | value |
+|---|---|
+| `NATIVE` | 0.944 |
+| `BUDGET` @2× / @4× / @8× / @16× | 0.556 / 0.250 / 0.139 / 0.056 |
+| best training-free KV @2× | 0.056 |
+| `NOCTX` | 0.000 |
+
+Define the **recovery fraction** at ratio `r`:
+
+```
+recovery(r) = ( LEARNED(r) − BUDGET(r) ) / ( NATIVE − BUDGET(r) )
+```
+
+`recovery = 0` means the compressor is worth exactly as much as keeping 1/r of the raw
+text. `recovery = 1` means compression is free.
+
+### FAILED representation hypothesis — report and stop
+
+Any of:
+
+- `LEARNED(r) ≤ BUDGET(r) + 0.05` at **every** ratio tested; or
+- `LEARNED(4×) < 0.30` (i.e. it cannot clear `BUDGET(4×)=0.250` by a usable margin); or
+- `LEARNED ≈ RANDOM` at every ratio.
+
+**Conclusion in that case:** selection / raw-page retrieval is more promising than state
+compression, and the project should pivot to Stage 6 rather than adding machinery to
+rescue Stage 2b. Do not raise ratios, enlarge the sidecar, or extend training in search
+of a better number after seeing a failure.
+
+### PROMISING — all four required
+
+1. `LEARNED(4×) ≥ 0.40`, i.e. **recovery(4×) ≥ 0.22** and a clear margin over
+   `BUDGET(4×)=0.250`.
+2. `LEARNED(4×) − NOCTX ≥ 0.35`.
+3. Mean `rank_margin` on `semantic` ≥ **+2.0** at 4× (against `NATIVE` +13.8, `NOCTX`
+   −0.86) — the representation must preserve ranking, not just occasionally guess right.
+4. Positional correctness holds: the ratio-1.0 identity test passes, and composed
+   multi-chunk `Z` is not worse than single-chunk `Z` by more than **10 relative
+   percent** on semantic facts.
+
+### STRONGLY PROMISING — either of
+
+- **recovery(4×) ≥ 0.70**, i.e. `LEARNED(4×) ≥ 0.736`; or
+- `LEARNED(8×) ≥ 0.35`, i.e. comfortably above `BUDGET(8×)=0.139`.
+
+### Notes on interpretation, fixed in advance
+
+- **Per-fact-class reporting is mandatory**, not optional: `semantic`, `proper_noun`,
+  `number`, `date`, `hash`, `identifier`, `path`, `url`, `composition`. The aggregate
+  number alone must not be quoted.
+- A separate experiment (`epitaxy`, not this repo, code and results not imported)
+  observed that approximate context preserves semantics far better than arbitrary exact
+  strings. **This is recorded as a hypothesis to test, not an expectation.** If our
+  exact classes survive as well as `semantic`, that is a genuine disconfirmation and is
+  reported as one.
+- All thresholds above are frozen. Draw B remains untouched until the single final
+  evaluation.
 
 ---
 
@@ -260,7 +334,7 @@ evaluation construction, before reporting anything:
 11. Does the result justify building a true learned context codec?
 12. What part, if any, appears unexplored by the cited literature?
 
-Question 12 is answered against [RELATED_WORK.md](RELATED_WORK.md) §4–6, which was
+Question 12 is answered against [RELATED_WORK.md](RELATED_WORK.md) §5–7, which was
 written **before** any result existed, specifically so that novelty cannot be
 rationalized after the fact.
 

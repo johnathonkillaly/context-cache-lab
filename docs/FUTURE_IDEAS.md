@@ -1,11 +1,54 @@
 # Future ideas — explicitly deferred
 
-**Rule for this file: nothing here gets implemented until the Stage 1–3 baseline works.**
+**Rule for this file: nothing here gets implemented until the baseline it depends on
+works.** Each entry states its own precondition; that precondition is the gate, not a
+suggestion. The first entry (Stage 2c) is the designated *next* experiment and is gated
+specifically on Stage 2b producing a full-precision result that beats `BUDGET`.
 
 Every item below is a plausible improvement to a system that does not yet exist. Adding
 any of them early would confound the one measurement this project is actually trying to
 make — whether independently compiled context state composes at all. Each entry records
 *what it is*, *what it might buy*, and *the specific precondition that must be met first*.
+
+---
+
+## Stage 2c — Axis B: bits per state (the immediate next experiment if 2b passes)
+
+**This is the designated next experiment, not a speculative idea.** Recorded here because
+it must not be started until Stage 2b has a full-precision result.
+
+Keep the two compression axes strictly separate (see `RELATED_WORK.md` §3):
+
+- **Axis A — state count.** `N` context positions → `M` learned memory positions. Reduces
+  *attention work and active positions*. **That is Stage 2b.**
+- **Axis B — bits per state.** BF16 `Z` → INT8/INT4/INT2/VQ. Reduces *bytes and
+  bandwidth*, same number of positions.
+
+If Stage 2b works in full precision, ask whether each learned memory state can also be
+compressed in the representation dimension. Compare `Z_BF16` against:
+
+1. plain INT8, then INT4 (the honest baseline — try this before anything clever);
+2. **QJL**-style JL-projection + sign quantization;
+3. **PolarQuant**-style random preconditioning + polar transform, quantizing angles;
+4. **CommVQ**-style additive vector quantization with a learned codebook.
+
+**The RoPE constraint that matters here.** Our `Z` is stored **pre-RoPE** and has position
+re-applied at composition. A codec that does not commute with rotation would have to be
+applied *after* positioning, which destroys the reusability of the stored artifact.
+CommVQ's construction gives the fix: 2×2 blocks of the form `[[x, y], [−y, x]]` commute
+with RoPE's rotation blocks. **Constrain any Stage 2c codec to that form** and the two
+axes stay independent — the stored code can be positioned at composition time without
+being dequantized first.
+
+**Arithmetic discipline.** If Axis A reaches 8× and Axis B reaches 4×, the *storage and
+traffic* reduction may approach 32×. **Do not report that product as an achieved
+speedup.** It is a hypothesis until both components are measured, and it says nothing
+about latency: Axis A removes attention work, Axis B removes bytes, and on unified memory
+those are not the same bottleneck.
+
+**Precondition:** a full-precision Stage 2b result that beats `BUDGET`. Quantizing a
+compressor that does not work would confound "the learned state is lossy" with "the
+quantizer is lossy".
 
 ---
 
@@ -22,8 +65,46 @@ and **provides no semantics**. It can make a representation *more quantizable*; 
 cannot make it *more meaningful*. Any claim that rotation "improves" a representation
 must be attributed to the downstream quantizer, not the rotation.
 
+**The literature now says exactly this, which both supports the idea and bounds it.**
+QJL shows that a random projection spreads outlier energy so effectively that 1-bit sign
+quantization becomes viable *and* per-block scale/zero-point constants can be dropped
+entirely. PolarQuant makes the same argument through a polar transform, and explicitly
+connects it to random Hadamard preconditioning. So: preconditioning earns its keep
+**only through a quantizer**. It is a Stage 2c component, not a standalone idea.
+
 **Precondition:** measured evidence that outlier channels in `Z` are what limits
 quantization — i.e. a quantization sweep that shows a specific failure mode this fixes.
+
+---
+
+## Hierarchical multi-fidelity pages
+
+A page eventually carries more than one fidelity tier:
+
+```
+P_i = ( h_i , r_i , Z_i^low , Z_i^residual , C_i )
+        │     │     │         │              └── exact raw tokens (lossless)
+        │     │     │         └───────────────── optional higher-fidelity residual
+        │     │     └─────────────────────────── highly compressed semantic state
+        │     └───────────────────────────────── cheap retrieval landmark
+        └─────────────────────────────────────── stable content ID
+```
+
+The query loads `Z^low` for everything it might need, pulls `Z^residual` only for pages
+that look load-bearing, and falls back to `C_i` only when exactness is actually required.
+
+**Motivated by, and partly pre-empted by, published work.** QuantSpec already stores one
+hierarchical cache where an INT4 tensor serves a low-precision tier and residual bits
+reconstruct an INT8 view, avoiding a second copy — the residual-tier layout is theirs.
+LycheeMemory's JIT recompression and CacheBlend/EPIC's partial recomputation are the same
+instinct applied to different tiers. What would be ours, if anything, is combining a
+residual fidelity ladder with **content-addressed identity** and a **lossless raw-token
+bottom tier**, then measuring what fraction of pages ever need each tier.
+
+**Precondition:** Stage 2b must produce a working `Z` first — there is no `Z^low` to
+refine without one — and Stage 7 must show that oracle exact-fallback has real headroom.
+Two tiers only become interesting once one tier is proven insufficient *and* the failures
+are concentrated rather than uniform.
 
 ---
 
