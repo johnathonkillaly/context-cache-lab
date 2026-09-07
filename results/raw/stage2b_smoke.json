@@ -1,0 +1,62 @@
+{
+  "stage": "2b-smoke",
+  "config": {
+    "model": "Qwen/Qwen3-4B",
+    "ratio": 4.0,
+    "docs": 2,
+    "steps": 200,
+    "lr": 0.0001,
+    "layer_share": 1,
+    "n_sink": 8,
+    "max_chunks": 3,
+    "eval_every": 40,
+    "length": 1024,
+    "out": "results/raw/stage2b_smoke.json"
+  },
+  "n_trainable": 566233600,
+  "history": [
+    {
+      "step": 40,
+      "loss": 1.878176361322403,
+      "rank_margin": 0.3404742454489072
+    },
+    {
+      "step": 80,
+      "loss": 0.3302285263765924,
+      "rank_margin": 8.339860320091253
+    },
+    {
+      "step": 120,
+      "loss": 0.27706078623596114,
+      "rank_margin": 6.234395442378475
+    },
+    {
+      "step": 160,
+      "loss": 0.2629463072530143,
+      "rank_margin": 9.199153480083629
+    },
+    {
+      "step": 200,
+      "loss": 0.08304706294867828,
+      "rank_margin": 9.336974068728717
+    }
+  ],
+  "verdict": {
+    "loss_first10": 4.375263786315918,
+    "loss_last10": 0.08304706294867828,
+    "loss_drop": 4.29221672336724,
+    "rank_margin_init": -1.3287654717763264,
+    "rank_margin_final": 9.336974068728717,
+    "learns": true
+  },
+  "git_commit": "b477c9e-dirty",
+  "timestamp_utc": "2026-09-07T18:26:45+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  }
+}
