@@ -23,6 +23,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--draw", choices=["A", "B"], required=True)
     ap.add_argument("--seed", type=int, default=None, help="default: 11 for A, 977 for B")
+    ap.add_argument(
+        "--tag",
+        default=None,
+        help="named split, e.g. 'train'. Uses the draw's pools with a different seed, "
+        "writes <tag>_<draw>.json, and asserts disjointness from the held-out draw B "
+        "and from the draw's own evaluation documents.",
+    )
     ap.add_argument("--model", default="Qwen/Qwen3-4B", help="tokenizer used for lengths")
     ap.add_argument("--lengths", default="1024,2048,4096,8192,16384")
     ap.add_argument("--n-docs", type=int, default=8)
@@ -31,7 +38,16 @@ def main() -> int:
     ap.add_argument("--outdir", default="results/raw/corpus")
     args = ap.parse_args()
 
-    seed = args.seed if args.seed is not None else (11 if args.draw == "A" else 977)
+    default_seed = 11 if args.draw == "A" else 977
+    if args.tag and args.seed is None:
+        # A tagged split must never reuse the evaluation seed, or it would regenerate
+        # the very documents it is supposed to be disjoint from.
+        default_seed = 20260907
+    seed = args.seed if args.seed is not None else default_seed
+    if args.tag and seed == (11 if args.draw == "A" else 977):
+        raise SystemExit(
+            f"--tag {args.tag!r} must not reuse draw {args.draw}'s evaluation seed"
+        )
     lengths = [int(x) for x in args.lengths.split(",")]
 
     from transformers import AutoTokenizer
@@ -52,7 +68,8 @@ def main() -> int:
     )
 
     os.makedirs(args.outdir, exist_ok=True)
-    path = os.path.join(args.outdir, f"draw_{args.draw}.json")
+    name = f"{args.tag}_{args.draw}" if args.tag else f"draw_{args.draw}"
+    path = os.path.join(args.outdir, f"{name}.json")
     save_corpus(docs, path)
 
     by_len: dict[int, list[int]] = {}
@@ -60,6 +77,7 @@ def main() -> int:
         by_len.setdefault(d.target_tokens, []).append(d.n_tokens)
     summary = {
         "draw": args.draw,
+        "tag": args.tag,
         "seed": seed,
         "tokenizer_model": args.model,
         "n_documents": len(docs),
@@ -81,18 +99,48 @@ def main() -> int:
         docs_k = [d for d in docs if d.target_tokens == k]
         summary["lengths"][str(k)]["n_chunks"] = docs_k[0].meta["n_chunks"]
 
-    other = os.path.join(args.outdir, f"draw_{'B' if args.draw == 'A' else 'A'}.json")
-    if os.path.exists(other):
-        overlap = all_values(docs) & all_values(load_corpus(other))
-        summary["ab_value_overlap"] = sorted(overlap)
+    # A tagged training split shares its draw's value POOLS by design - that is what
+    # makes it the same distribution. What must hold is (a) it never touches held-out
+    # draw B, and (b) it shares no actual document with the draw's evaluation set.
+    held_out = os.path.join(args.outdir, "draw_B.json")
+    if args.tag and os.path.exists(held_out) and args.draw != "B":
+        overlap = all_values(docs) & all_values(load_corpus(held_out))
+        summary["heldout_value_overlap"] = sorted(overlap)
         if overlap:
             raise SystemExit(
-                f"FATAL: draws A and B share {len(overlap)} fact values: "
-                f"{sorted(overlap)[:5]}. Held-out evaluation would be contaminated."
+                f"FATAL: split {args.tag!r} shares {len(overlap)} fact values with "
+                f"held-out draw B: {sorted(overlap)[:5]}."
             )
-        summary["ab_disjoint_verified"] = True
+        summary["heldout_disjoint_verified"] = True
 
-    with open(os.path.join(args.outdir, f"summary_{args.draw}.json"), "w") as fh:
+    if args.tag:
+        eval_path = os.path.join(args.outdir, f"draw_{args.draw}.json")
+        if os.path.exists(eval_path):
+            eval_docs = load_corpus(eval_path)
+            train_cids = {c.content_id for d in docs for c in d.chunks}
+            eval_cids = {c.content_id for d in eval_docs for c in d.chunks}
+            shared = train_cids & eval_cids
+            summary["shared_chunks_with_eval"] = len(shared)
+            if shared:
+                raise SystemExit(
+                    f"FATAL: split {args.tag!r} shares {len(shared)} chunks with the "
+                    f"draw {args.draw} evaluation set."
+                )
+            summary["train_eval_chunk_disjoint_verified"] = True
+
+    if not args.tag:
+        other = os.path.join(args.outdir, f"draw_{'B' if args.draw == 'A' else 'A'}.json")
+        if os.path.exists(other):
+            overlap = all_values(docs) & all_values(load_corpus(other))
+            summary["ab_value_overlap"] = sorted(overlap)
+            if overlap:
+                raise SystemExit(
+                    f"FATAL: draws A and B share {len(overlap)} fact values: "
+                    f"{sorted(overlap)[:5]}. Held-out evaluation would be contaminated."
+                )
+            summary["ab_disjoint_verified"] = True
+
+    with open(os.path.join(args.outdir, f"summary_{name}.json"), "w") as fh:
         json.dump(summary, fh, indent=2)
     print(json.dumps(summary, indent=2))
     print(f"\nwrote {path}")

@@ -1,0 +1,39 @@
+{
+  "draw": "A",
+  "tag": "train",
+  "seed": 20260907,
+  "tokenizer_model": "Qwen/Qwen3-4B",
+  "n_documents": 120,
+  "n_questions": 1080,
+  "chunk_tokens": 256,
+  "lengths": {
+    "1024": {
+      "n_docs": 60,
+      "mean_actual_tokens": 1130.3,
+      "min": 1050,
+      "max": 1256,
+      "n_chunks": 4
+    },
+    "4096": {
+      "n_docs": 60,
+      "mean_actual_tokens": 4226.1,
+      "min": 4182,
+      "max": 4271,
+      "n_chunks": 16
+    }
+  },
+  "git_commit": "3905c77-dirty",
+  "timestamp_utc": "2026-09-07T18:29:52+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  },
+  "heldout_value_overlap": [],
+  "heldout_disjoint_verified": true,
+  "shared_chunks_with_eval": 0,
+  "train_eval_chunk_disjoint_verified": true
+}
