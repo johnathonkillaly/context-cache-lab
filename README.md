@@ -109,6 +109,13 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ".[de
 .venv/bin/python scripts/run_native_baseline.py --draw A --model Qwen/Qwen3-4B
 ```
 
+```bash
+.venv/bin/python scripts/make_tables.py --results results/raw/stage1_baseline_drawA.json
+```
+
+`make_tables.py` exits non-zero when the Stage 1 gate fails, so the gate is a check, not
+a judgement call made in prose afterwards.
+
 ## Layout
 
 | Path | Contents |

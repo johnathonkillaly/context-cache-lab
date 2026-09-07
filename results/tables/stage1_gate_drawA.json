@@ -1,0 +1,87 @@
+{
+  "per_class": {
+    "composition": {
+      "native": 0.55,
+      "noctx": 0.0,
+      "delta": 0.55,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 4.408114703583914,
+      "noctx_margin": -1.6958848714828492
+    },
+    "date": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 2.7857799619436263,
+      "noctx_margin": 0.1254329800605774
+    },
+    "hash": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 2.715616887621683,
+      "noctx_margin": 0.06770246028900147
+    },
+    "identifier": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 5.14017226621756,
+      "noctx_margin": -0.10096940994262696
+    },
+    "number": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 5.03647538666817,
+      "noctx_margin": 0.008018308877944946
+    },
+    "path": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 2.584920804119153,
+      "noctx_margin": 0.0013031959533691406
+    },
+    "proper_noun": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 8.18492642429641,
+      "noctx_margin": 0.06092724800109863
+    },
+    "semantic": {
+      "native": 0.975,
+      "noctx": 0.0,
+      "delta": 0.975,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 13.842190198168305,
+      "noctx_margin": -0.8639163851737977
+    },
+    "url": {
+      "native": 1.0,
+      "noctx": 0.0,
+      "delta": 1.0,
+      "separation_ok": true,
+      "floor_ok": true,
+      "native_margin": 2.5801017629639893,
+      "noctx_margin": 0.05042599439620972
+    }
+  },
+  "passed": true,
+  "failures": []
+}

@@ -155,6 +155,22 @@ def timing_sweep(tm: TargetModel, docs: list[Document], trials: int, warmup: int
     for d in docs:
         by_len.setdefault(d.target_tokens, d)
 
+    # Global warm-up at the largest shape before any measurement. MPS compiles kernels
+    # per shape on first use, and the first length measured otherwise absorbs that cost:
+    # an earlier run showed the 1K prefill samples falling monotonically 2.25s -> 1.50s
+    # across five trials, which made 1K look *slower* than 2K.
+    if by_len:
+        biggest = by_len[max(by_len)]
+        warm_ids = tm.encode(
+            tm.build_prompt(
+                biggest.facts[0].question, biggest.text, biggest.facts[0].answer_hint
+            )
+        )
+        for _ in range(2):
+            _, c = tm.prefill(warm_ids)
+            del c
+        _free()
+
     for length, doc in sorted(by_len.items()):
         fact = doc.facts[0]
         ids = tm.encode(tm.build_prompt(fact.question, doc.text, fact.answer_hint))
@@ -207,6 +223,11 @@ def main() -> int:
     ap.add_argument("--trials", type=int, default=5)
     ap.add_argument("--warmup", type=int, default=2)
     ap.add_argument("--skip-timing", action="store_true")
+    ap.add_argument(
+        "--timing-only",
+        action="store_true",
+        help="re-measure latency without redoing the quality sweep",
+    )
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -229,10 +250,11 @@ def main() -> int:
     print(f"device={tm.device} params={sum(p.numel() for p in tm.model.parameters()):,}")
 
     rows: list[dict] = []
-    for i, doc in enumerate(docs, 1):
-        print(f"[{i}/{len(docs)}] {doc.doc_id} ({doc.n_tokens} tok)", flush=True)
-        rows.extend(run_native_for_doc(tm, doc, args.max_new_tokens))
-        rows.extend(run_noctx_for_doc(tm, doc, args.max_new_tokens))
+    if not args.timing_only:
+        for i, doc in enumerate(docs, 1):
+            print(f"[{i}/{len(docs)}] {doc.doc_id} ({doc.n_tokens} tok)", flush=True)
+            rows.extend(run_native_for_doc(tm, doc, args.max_new_tokens))
+            rows.extend(run_noctx_for_doc(tm, doc, args.max_new_tokens))
 
     timings: list[dict] = []
     if not args.skip_timing:
@@ -254,6 +276,23 @@ def main() -> int:
 
     out = args.out or f"results/raw/stage1_baseline_draw{args.draw}.json"
     os.makedirs(os.path.dirname(out), exist_ok=True)
+
+    if args.timing_only:
+        # Re-measuring latency must not silently discard the quality sweep that took
+        # half an hour to produce.
+        if not os.path.exists(out):
+            raise SystemExit(f"--timing-only needs an existing {out} to update")
+        with open(out, encoding="utf-8") as fh:
+            prev = json.load(fh)
+        prev["timings"] = timings
+        prev["timing_restamped"] = stamp(
+            trials=args.trials, warmup=args.warmup, note="timings re-measured"
+        )
+        with open(out, "w", encoding="utf-8") as fh:
+            json.dump(prev, fh, indent=1)
+        print(f"\nupdated timings in {out} (quality rows preserved)")
+        return 0
+
     payload = {
         "stage": 1,
         "draw": args.draw,
