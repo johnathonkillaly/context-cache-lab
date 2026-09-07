@@ -167,6 +167,36 @@ class TargetModel:
         """Chat-formatted prompt. `context=None` is the NOCTX control."""
         return self._chat(self._user_block(question, context, hint))
 
+    def split_prompt4(
+        self, question: str, context: str, hint: str | None = None
+    ) -> tuple[str, str, str, str] | None:
+        """Split into (chat head, document body, closing tags, question suffix).
+
+        Stage 2a needs to know exactly which cache positions hold the *document*, so it
+        can compress that span and leave the chat scaffolding intact. Returns None if
+        BPE does not tokenize the four pieces as the concatenation of their token
+        sequences, so a misaligned span is never compressed silently.
+        """
+        full = self.build_prompt(question, context, hint)
+        i = full.find(_DOC_OPEN)
+        j = full.find(_DOC_CLOSE, i)
+        if i < 0 or j < 0:
+            return None
+        # The newline that opens _DOC_CLOSE belongs to the *body* side of the split:
+        # Qwen's BPE merges a sentence-final "." with the following "\n" into one token,
+        # so cutting before the newline splits a token and the four pieces no longer
+        # tokenize as the concatenation. Moving the cut one character right leaves the
+        # prompt string byte-identical and makes the partition exact.
+        cut = j + 1
+        head = full[: i + len(_DOC_OPEN)]
+        body = full[i + len(_DOC_OPEN) : cut]
+        tail = full[cut : j + len(_DOC_CLOSE)]
+        suffix = full[j + len(_DOC_CLOSE) :]
+        enc = lambda s: self.tokenizer(s, add_special_tokens=False)["input_ids"]  # noqa: E731
+        if enc(head) + enc(body) + enc(tail) + enc(suffix) != enc(full):
+            return None
+        return head, body, tail, suffix
+
     def split_prompt(
         self, question: str, context: str, hint: str | None = None
     ) -> tuple[str, str] | None:
@@ -200,16 +230,32 @@ class TargetModel:
 
     @torch.inference_mode()
     def prefill(
-        self, input_ids: torch.Tensor, cache: DynamicCache | None = None
+        self,
+        input_ids: torch.Tensor,
+        cache: DynamicCache | None = None,
+        position_ids: torch.Tensor | None = None,
+        cache_position: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, DynamicCache]:
-        """Forward pass appending into `cache`. Returns (last-position logits, cache)."""
+        """Forward pass appending into `cache`. Returns (last-position logits, cache).
+
+        `position_ids` and `cache_position` are separable on purpose. After document
+        positions have been dropped from the cache, *where a token is written* (a
+        contiguous slot in the shrunken cache) is no longer *what position it occupies*
+        (its original index, whose RoPE phase the surviving keys were encoded with).
+        Conflating the two silently re-dates the query relative to the context.
+        """
         cache = cache if cache is not None else self.new_cache()
         past = cache.get_seq_length()
-        pos = torch.arange(past, past + input_ids.shape[1], device=input_ids.device)
+        n = input_ids.shape[1]
+        if cache_position is None:
+            cache_position = torch.arange(past, past + n, device=input_ids.device)
+        if position_ids is None:
+            position_ids = cache_position
         out = self.model(
             input_ids=input_ids,
             past_key_values=cache,
-            position_ids=pos.unsqueeze(0),
+            position_ids=position_ids.reshape(1, -1),
+            cache_position=cache_position,
             use_cache=True,
         )
         return out.logits[:, -1, :], cache
