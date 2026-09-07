@@ -157,7 +157,8 @@ as one — it does not mean "try harder until it works."
 |---|---|---|
 | 0 | Repo, env, docs | — |
 | 1 | Model geometry probe; corpus; **NATIVE + NOCTX baselines** at 1K–16K | NATIVE clearly beats NOCTX on every fact class; NOCTX near floor on exact classes |
-| 2 | Single-chunk compression at 2×, 4×, 8×, 16× | at ≥1 ratio, COMPILED > NOCTX by a wide margin **and** ≥ BUDGET |
+| 2a | **Training-free** compression floor: position dropping, `BUDGET`, `RANDOM`, `SHUFFLE` | none — this is a measurement stage that sets the bar for 2b |
+| 2 | Single-chunk **learned** compression at 2×, 4×, 8×, 16× | at ≥1 ratio, COMPILED > NOCTX by a wide margin **and** ≥ BUDGET **and** ≥ the Stage 2a floor |
 | 3 | **Independent compilation + composition** | COMPILED ≈ JOINT (within noise), and both ≫ RANDOM/SHUFFLE/WRONGPAGE |
 | 4 | Reuse and amortization | warm TTFT beats native prefill; amortization curve crosses over at reasonable m |
 | 5 | Content-addressed pages `(h_i, z_i, C_i)` | dedup + recompilation-skip verified; raw recoverable byte-exact |
@@ -167,6 +168,12 @@ as one — it does not mean "try harder until it works."
 
 **Stage 1 must fully pass before any compressor is written.** A baseline harness that
 cannot distinguish NATIVE from NOCTX cannot evaluate anything.
+
+**Stage 2a was inserted after Stage 1 passed** (it was not in the original plan). The
+reasoning: a learned compressor is only worth building if the frozen target cannot
+already be served by a heuristic, and the *floor* set by heuristics is the honest bar
+for Stage 2 — not `NOCTX`. It costs no training and reuses the Stage 1 harness. It also
+forced the pre-RoPE/post-RoPE distinction into the code before Stage 3 depends on it.
 
 ### Architectural commitments (from the literature survey)
 

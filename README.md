@@ -131,7 +131,22 @@ a judgement call made in prose afterwards.
 
 ## Status
 
-See [`AGENTS.md`](AGENTS.md). Short version: Stage 0 complete, Stage 1 in progress.
+See [`AGENTS.md`](AGENTS.md) for the full record. Short version:
+
+- **Stage 0 complete** — literature survey written before any code.
+- **Stage 1 complete, gate PASSED** — `NATIVE` 0.947 vs `NOCTX` 0.000 over 720
+  evaluations, with no parametric leakage on any exact fact class. Native prefill at 16K
+  costs **22.7 s** (24.7 s TTFT, 2.4 GiB of KV) on this M4 Max — the cost that motivates
+  the whole project.
+- **Stage 2a complete** — training-free compression floor. Two findings that shape
+  everything after it:
+  - **Dropping KV positions is catastrophic even at 2×** (0.944 → 0.028). A learned
+    compressor is *necessary*, not an optimization.
+  - **Equal-budget raw text scores ≈ 1/r** (0.556 / 0.250 / 0.139 / 0.056 at
+    2/4/8/16×) and beats every KV heuristic at every ratio. So the real question for a
+    learned compressor is sharp: **does a degraded version of every chunk beat a perfect
+    version of some chunks?**
+- **Stage 2b (learned compressor) — next.** Stages 3–8 not started.
 
 ## Relationship to `epitaxy`
 

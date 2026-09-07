@@ -119,7 +119,10 @@ pass; deterministic corpus built for draws A and B (40 docs / 360 questions each
 A/B value pools asserted disjoint); NATIVE and NOCTX measured on draw A at 1K–16K
 (720 evaluations).
 
-**Stage 2 — not started.** This is the next piece of work.
+**Stage 2a — complete.** Training-free compression floor measured (8 documents at 4K and
+16K, 1,368 evaluations). Result below; it changes what Stage 2 has to beat.
+
+**Stage 2b (learned compressor) — not started.** This is the next piece of work.
 
 **Draw B has deliberately not been run.** It is held out for the single final
 evaluation against the frozen criteria. Do not run any condition against draw B — not
@@ -209,23 +212,93 @@ that motivates this whole project. Prefill throughput decays monotonically with 
 (1100 → 747 tok/s) as attention cost grows — so the win from removing active positions
 is *superlinear* in the positions removed, which is the effect Stage 4 has to capture.
 
+### Stage 2a: training-free compression floor
+
+Raw: `results/raw/stage2a_trainfree_drawA.json`. Report:
+`results/tables/stage2a_report_drawA.md`. 8 documents (4K and 16K), 1,368 evaluations.
+
+Full-budget references — these validate the harness before anything is read into the
+compression numbers:
+
+| condition | clean_hit | margin | note |
+|---|---|---|---|
+| NATIVE_CACHED | 0.944 | +5.36 | matches Stage 1 NATIVE (0.947) — cache reconstruction is faithful |
+| RANDOM | 0.000 | +0.12 | moment-matched noise carries nothing, as it must |
+| SHUFFLE_KV_ORDER | 0.944 | +5.35 | **exact no-op, as predicted** |
+| SHUFFLE_TEXT | 0.889 | +4.53 | genuinely reordering chunks costs only ~5 points |
+
+Compression sweep (`clean_hit`):
+
+| condition | 2× | 4× | 8× | 16× |
+|---|---|---|---|---|
+| KV_STRIDE | 0.028 | 0.000 | 0.000 | 0.000 |
+| KV_SINK | 0.056 | 0.014 | 0.000 | 0.000 |
+| KV_STRIDE_COMPACT | 0.000 | 0.000 | 0.000 | 0.000 |
+| **BUDGET** (raw text) | **0.556** | **0.250** | **0.139** | **0.056** |
+
+**Four things follow, and they shape Stage 2b:**
+
+1. **Training-free KV dropping is catastrophic — even at 2×.** The gentlest possible
+   reduction takes the model from 0.944 to 0.028. Rank margins collapse from +5.36 to
+   ≈+0.1, i.e. essentially no discrimination between gold and distractor. A learned
+   compressor is *necessary*, not an optimization. This is consistent with C²KV
+   (naive compression + non-prefix reuse degrades severely) and Cartridges (generic
+   compression falls apart past ~2×).
+2. **BUDGET ≈ 1/ratio, almost exactly** (0.556 / 0.250 / 0.139 / 0.056 against 0.50 /
+   0.25 / 0.125 / 0.0625). That is the signature of an all-or-nothing baseline: a fact
+   is either inside a retained chunk or it is gone. It makes the bar for Stage 2b
+   unusually crisp — **a learned compressor is only interesting if it beats 1/r, which
+   means proving that a degraded version of *every* chunk beats a perfect version of
+   *some* chunks.** That is the real scientific question, and it is sharper than
+   "beat no-context".
+3. **`SHUFFLE_KV_ORDER` is an exact no-op**, to three decimals including margins.
+   Attention is permutation-invariant over keys and a post-RoPE key carries its position
+   in its own rotation, so reordering cache tensors changes nothing observable. This is
+   not a null result to shrug at — it is a direct demonstration of why C²KV must store
+   KV **pre-RoPE**: an independently encoded chunk cannot be re-placed without being
+   re-rotated. **Do not use a KV-order shuffle as a Stage 3 control; it is vacuous by
+   construction.** Use `SHUFFLE_TEXT`-style reordering, and note it only costs ~5 points
+   natively, so surviving a shuffle proves less than it looks.
+4. **Re-dating positions hurts.** `KV_STRIDE_COMPACT` (query re-dated to the shrunken
+   length) is at or below `KV_STRIDE` (original absolute positions) at every ratio, with
+   negative margins at 2× and 4× where `KV_STRIDE` is positive. Both are near floor so
+   the effect is small, but the sign is consistent and it is the same failure mode
+   Stage 3 is exposed to.
+
 **Reporting rule:** no quality number without its controls (`docs/EXPERIMENT.md` §4), and
 no speedup without cold cost, warm cost, and the amortization curve.
 
 ## 8. Next steps
 
-1. **Stage 2 — single-chunk compressor.** Build a C²KV-style sidecar: shared learnable
-   compression-token embedding + per-layer QKV projection heads over the frozen target's
-   hidden states. Enforce the three attention constraints from `docs/RELATED_WORK.md`
-   §1.1 (original-token invariance, block-local extraction with a sink block, causal
-   accumulation across compression tokens). Store KV **pre-RoPE**.
-2. Add the `BUDGET` control (raw context truncated to the same token count as `Z`)
-   *before* reporting any Stage 2 quality number — it is the comparison that decides
-   whether compression is doing useful work.
-3. Sweep 2×/4×/8×/16×. Expect degradation past ~8×; Cartridges reports generic
-   compression falling apart past ~2×, so collapse is a publishable outcome, not a bug.
-4. Only after Stage 2 clears its gate: Stage 3 independent compilation + composition,
-   with `JOINT`, `RANDOM`, `SHUFFLE`, `WRONGPAGE` controls.
+1. **Stage 2b — learned single-chunk compressor.** Build a C²KV-style sidecar: a shared
+   learnable compression-token embedding plus per-layer QKV projection heads over the
+   frozen target's hidden states. Enforce the three attention constraints from
+   `docs/RELATED_WORK.md` §1.1 (original-token invariance, block-local extraction with a
+   sink block, causal accumulation across compression tokens). Store KV **pre-RoPE** —
+   Stage 2a's `SHUFFLE_KV_ORDER` no-op is the direct demonstration of why.
+2. **Target the bar Stage 2a set, not `NOCTX`.** `BUDGET ≈ 1/r`, so the compressor is
+   only interesting if it beats 0.250 at 4× and 0.139 at 8×. Concretely: prove that a
+   degraded version of *every* chunk beats a perfect version of *some* chunks. If it
+   cannot, the honest conclusion is that chunk selection (Stage 6) matters more than
+   chunk compression, and the project should pivot there.
+3. Sweep 2×/4×/8×/16×. Given that training-free dropping is already at floor by 2×,
+   treat any learned result above `BUDGET` at 4× as a real signal, and expect collapse
+   somewhere between 8× and 16×.
+4. Training data must come from draw A only, and the compressor must never see a
+   question at compile time (`docs/EXPERIMENT.md` §8). Cartridges reports that a naive
+   next-token objective on the corpus is not competitive with in-context learning —
+   supervise on the answer *after* concatenation, as C²KV does.
+5. Only after Stage 2b clears its gate: Stage 3 independent compilation + composition,
+   with `JOINT`, `RANDOM`, `WRONGPAGE` and a **text-level** shuffle control.
+
+Two efficiency notes for whoever runs the next sweep:
+
+- `run_stage2a.py` rebuilds the context cache once per *question* rather than once per
+  *condition*, so a 16K document pays 162 cache builds instead of 18. The full 8-document
+  sweep took ~2h40m. Building once per condition and cropping back after each question
+  (as `run_native_baseline.py` already does) would cut this substantially.
+- Piping a long background run through `tail` buffers all output until exit. Use `tee`
+  to a log file if you want to watch progress.
 
 Do not touch draw B until the final held-out evaluation.
 
