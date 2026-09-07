@@ -1,0 +1,29 @@
+[project]
+name = "context-cache-lab"
+version = "0.1.0"
+description = "Can long LLM context be compiled once into reusable, composable, compact model-readable state?"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "torch>=2.6",
+    "transformers>=4.51",
+    "safetensors>=0.4",
+    "numpy>=1.26",
+    "tokenizers>=0.20",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ccl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "slow: requires loading a real model (deselect with '-m \"not slow\"')",
+]

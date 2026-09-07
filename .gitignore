@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+
+# Experiment outputs: raw JSON/CSV is committed deliberately (see results/README.md),
+# but large binary artifacts are not.
+results/**/*.safetensors
+results/**/*.pt
+pages/
+*.log
