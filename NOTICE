@@ -1,0 +1,80 @@
+context-cache-lab
+Copyright 2026 context-cache-lab contributors
+
+This product includes software developed by the context-cache-lab contributors,
+licensed under the Apache License, Version 2.0 (see LICENSE).
+
+================================================================================
+Third-party components and attribution
+================================================================================
+
+1. Hugging Face Transformers — Apache License 2.0
+   https://github.com/huggingface/transformers
+
+   `src/ccl/rope.py` imports `rotate_half` from
+   `transformers.models.qwen3.modeling_qwen3`, and its `apply_rope_to_keys`
+   deliberately mirrors the key half of that module's `apply_rotary_pos_emb`
+   so that re-applied rotary embeddings are bit-compatible with the model's own.
+   `src/ccl/target.py` and `src/ccl/compress.py` use the public `Cache` /
+   `DynamicCache` API.
+
+   The extraction pass in `src/ccl/compressor.py` reproduces the arithmetic of
+   `Qwen3Attention.forward` and `Qwen3DecoderLayer.forward` (q_norm/k_norm before
+   RoPE, GQA key/value repetition, o_proj, the post-attention MLP residual) so
+   that memory tokens flow through the frozen target's own layers. It was written
+   against the published module and is a reimplementation, not a verbatim copy.
+
+2. Qwen3-4B — Apache License 2.0
+   https://huggingface.co/Qwen/Qwen3-4B
+
+   Used as the frozen target model. **No model weights are distributed in this
+   repository.** The model is downloaded from Hugging Face by the user at run
+   time. `results/stage3/freeze.json` records the model revision hash used, for
+   provenance only.
+
+3. PyTorch — BSD-3-Clause (with bundled components under Apache-2.0,
+   BSD-2-Clause, BSL-1.0 and MIT)
+   https://github.com/pytorch/pytorch
+
+4. NumPy (BSD-3-Clause), safetensors (Apache-2.0), tokenizers (Apache-2.0),
+   pytest (MIT) — used as declared dependencies only.
+
+================================================================================
+Research attribution — methods reproduced, not code copied
+================================================================================
+
+The compressor implemented here is a reimplementation of the *published
+mechanism* of C²KV. No source code from the C²KV project was copied, consulted
+line-by-line, or vendored; the implementation was written from the paper's
+description of its structured attention flow, its shared compression-token
+embedding, its per-layer QKV projection heads, and its pre-RoPE storage with
+positional reassignment at composition time.
+
+  C²KV: Compressed and Composable KV Cache Reuse for Efficient LLM Inference
+  Du, Chen, Tang, Liu, Lan, Qu, Niu, Liu, Chen, Wu. KDD 2026.
+  arXiv:2607.17715 — https://arxiv.org/abs/2607.17715
+  Reference implementation (not used here): https://github.com/s7a9/C2KV
+
+Other work whose ideas informed the experimental design, with no code reused,
+is credited in `docs/RELATED_WORK.md`, which separates published prior art (§5)
+from what this repository actually measured (§6) and the remaining gaps (§7).
+
+================================================================================
+Data
+================================================================================
+
+Every corpus in `results/raw/corpus/` and `results/stage3/` is **synthetic** and
+generated deterministically by `src/ccl/corpus.py` and `src/ccl/stage3_corpus.py`
+from explicit integer seeds. It contains no scraped text, no personal data, and
+no third-party copyrighted material. Entity names, hosts and paths are invented
+and any resemblance to real systems is coincidental.
+
+Known cosmetic issue: three of the four synthetic hostnames use RFC 2606 reserved
+domains (`depot.example.net`, `relay.example.org`, `vault.example.com`), but the
+draw-B pool also contains `gateway.example.io`, and `.io` is not reserved. These
+strings are inert — they are answers in a question-answering corpus and are never
+requested over the network by any code in this repository. It is left uncorrected
+because `src/ccl/corpus.py` is covered by the Stage 3 integrity hashes in
+`results/stage3/freeze.json`; changing it would invalidate the frozen provenance
+of a completed held-out evaluation, which is a worse outcome than an imperfect
+example domain.

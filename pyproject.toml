@@ -1,7 +1,16 @@
 [project]
 name = "context-cache-lab"
 version = "0.1.0"
-description = "Can long LLM context be compiled once into reusable, composable, compact model-readable state?"
+description = "A C2KV-style replication and measurement study of composable compiled context state on Apple Silicon"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+readme = "README.md"
+keywords = ["llm", "kv-cache", "context-compression", "long-context", "negative-results"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 requires-python = ">=3.11,<3.14"
 dependencies = [
     "torch>=2.6",

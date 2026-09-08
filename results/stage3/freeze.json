@@ -6,7 +6,7 @@
   "checkpoint_sha256": "b8384dd2eeaa87890a6b65e22f791183399764b93dd9a7f4e8a6e4ce13fca425",
   "checkpoint_step": 2200,
   "model_revision": "1cfa9a7208912126459214e8b04321603b3df60c",
-  "checkpoint_path": "/Users/johnathonkillaly/code/context_caching/results/raw/stage2b_extractor.pt",
+  "checkpoint_path": "results/raw/stage2b_extractor.pt",
   "protocol_sha256": "f181b2f308a2e36303f7cce472f227df3f5ca560d180ecd6c0eecb7152758ae3",
   "historical_files": {
     "results/raw/stage1_baseline_drawA.json": "baca59fc8b3adac10887791766c3d433b6a917e4241f1f458161126fe5a65b00",
@@ -56,5 +56,6 @@
     "dev_rows": 22,
     "dev_smoke_sha256": "3ae61f615d795194e51e91bb88fa80b7f77b57cff5a85deced749f6154a179fd",
     "timing_sha256": "e00b9d57804bb05962e29ccebdf69e0237446317497f195c3bc8164ee17f9791"
-  }
+  },
+  "checkpoint_path_note": "Repo-relative. An absolute local path was recorded at freeze time and was replaced for public release; integrity is established by checkpoint_sha256, which is unchanged."
 }

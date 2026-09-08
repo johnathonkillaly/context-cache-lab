@@ -1,0 +1,85 @@
+cff-version: 1.2.0
+message: >-
+  If you refer to this study, please cite it as below. Please also cite C²KV
+  (Du et al., KDD 2026), whose published mechanism this repository reimplements
+  and measures.
+title: "context-cache-lab: a C²KV-style replication and measurement study of composable compiled context state on Apple Silicon"
+abstract: >-
+  A negative-result-preserving research repository testing whether long LLM
+  context can be compiled once into compact, independently generated, composable
+  model-readable state that a frozen target model can consume in place of the
+  original tokens. Stage 1 established a clean native baseline on a deterministic
+  synthetic corpus (NATIVE 0.947 vs NOCTX 0.000). Stage 2a found that
+  training-free KV thinning collapses even at 2x, while equal-budget raw text
+  degrades as roughly 1/r. Stage 2b trained a 566M-parameter C2KV-style sidecar
+  over a frozen Qwen3-4B and found that learned compressed state beat
+  equal-position raw context at every ratio tested, with semantic facts surviving
+  far better than hashes and identifiers, and warm reuse 23-32x faster than native
+  prefill (breakeven at 2 queries); its preregistered gate nevertheless returned
+  INCONCLUSIVE. Stage 3 evaluated that frozen carrier on a preregistered
+  cross-page compositional task and it FAILED, scoring zero clean accuracy on all
+  native-valid two-page items. The general composable-page claim is therefore not
+  supported by these measurements.
+type: software
+authors:
+  - name: "context-cache-lab contributors"
+repository-code: "https://github.com/johnathonkillaly/context-cache-lab"
+license: Apache-2.0
+version: "0.1.0"
+date-released: "2026-09-08"
+keywords:
+  - large language models
+  - kv cache
+  - context compression
+  - prompt caching
+  - long context
+  - negative results
+  - reproducibility
+  - apple silicon
+references:
+  - type: article
+    title: "C2KV: Compressed and Composable KV Cache Reuse for Efficient LLM Inference"
+    year: 2026
+    collection-title: "Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining"
+    url: "https://arxiv.org/abs/2607.17715"
+    authors:
+      - family-names: Du
+        given-names: Chuheng
+      - family-names: Chen
+        given-names: Junyi
+      - family-names: Tang
+        given-names: Hanlin
+      - family-names: Liu
+        given-names: Kan
+      - family-names: Lan
+        given-names: Tao
+      - family-names: Qu
+        given-names: Lin
+      - family-names: Niu
+        given-names: Chaoyue
+      - family-names: Liu
+        given-names: Shengzhong
+      - family-names: Chen
+        given-names: Guihai
+      - family-names: Wu
+        given-names: Fan
+  - type: article
+    title: "Landmark Attention: Random-Access Infinite Context Length for Transformers"
+    year: 2023
+    url: "https://arxiv.org/abs/2305.16300"
+    authors:
+      - family-names: Mohtashami
+        given-names: Amirkeivan
+      - family-names: Jaggi
+        given-names: Martin
+  - type: article
+    title: "Cartridges: Lightweight and general-purpose long context representations via self-study"
+    year: 2025
+    url: "https://arxiv.org/abs/2506.06266"
+    authors:
+      - family-names: Eyuboglu
+        given-names: Sabri
+      - family-names: Ehrlich
+        given-names: Ryan
+      - family-names: Arora
+        given-names: Simran
