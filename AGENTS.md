@@ -125,13 +125,22 @@ A/B value pools asserted disjoint); NATIVE and NOCTX measured on draw A at 1K–
 **Stage 2b — complete. Gate verdict: INCONCLUSIVE** (not FAILED). Thresholds were frozen
 before the compressor was written and have **not** been moved. Results in §7.
 
-**Stage 3 — not started.** See §8 for what the Stage 2b evidence says about it.
+**Stage 3 — harness validated; final evaluation pending.** Frozen-carrier continuation
+selected by the user on 2026-09-07. No Stage 2b training or quantization. New protocol:
+`docs/STAGE3_PROTOCOL.md`; new draws/checkpoint hashes: `results/stage3/freeze.json`.
 
 **Draw B has deliberately not been run.** It is held out for the single final
 evaluation against the frozen criteria. Do not run any condition against draw B — not
 even a baseline — until the compiled conditions exist.
 
 ## 6. Important failures and gotchas
+
+- **Stage 3 QA:** scripts need the existing explicit `src` path setup; this venv does
+  not expose `ccl` to standalone scripts automatically. Fixed before evaluation.
+- **Stage 3 development smoke:** native solves both initial items; one terminal-only
+  page guesses the answer. Compiled generation loses details despite sometimes
+  positive rank margins. Keep per-item native-only validity and missing-page tests;
+  do not tune the carrier or corpus to turn this into a positive result.
 
 *Recorded as they happen. An empty section here after real work would itself be a smell.*
 
@@ -168,6 +177,13 @@ even a baseline — until the compiled conditions exist.
   and used even when it is not emitted.
 
 ## 7. Current results
+
+### Stage 3 preliminary QA (not a result gate)
+
+96 fast tests pass; live ratio-1 identity and learned pre-RoPE/immutability tests pass
+(2 live tests). Two development items / 22 rows in `results/stage3/dev_smoke.jsonl`.
+No held-out quality inspected yet. Frozen protocol and full report machinery added.
+Historical Stage 1–2 results below are unchanged.
 
 Raw: `results/raw/stage1_baseline_drawA.json`. Tables: `results/tables/`.
 Report: `results/tables/stage1_report_drawA.md`.
@@ -383,6 +399,18 @@ forward pass over the context — followed by a short forward over ~90 tail/ques
 no speedup without cold cost, warm cost, and the amortization curve.
 
 ## 8. Next steps
+
+**2026-09-07 decision (supersedes the historical options below):** accept Stage 2b
+INCONCLUSIVE and test cross-page composition with the unchanged step-2200 checkpoint.
+Do not train further. Run Stage 3 at 4× on its separately frozen held-out draw once
+after QA, then report the gates without tuning. Original Draw B stays untouched.
+Quantization, retrieval, and exact fallback remain deferred.
+
+Commands: `.venv/bin/python scripts/stage3_composition_eval.py --draw stage3_test_B
+--final`; interrupted run adds `--resume` and must match all frozen inputs.
+Report: `.venv/bin/python scripts/stage3_report.py`.
+
+Historical Stage 2b advice (not current authorization):
 
 The Stage 2b verdict is INCONCLUSIVE, so the honest options are (a) close the ~1% gap
 with more training, or (b) accept the qualitative result and move on. **Do not silently

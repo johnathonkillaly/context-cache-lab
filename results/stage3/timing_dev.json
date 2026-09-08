@@ -1,0 +1,206 @@
+{
+  "samples": [
+    {
+      "page_compile_s": [
+        0.15113791590556502,
+        0.15946658293250948
+      ],
+      "independent": {
+        "compile_s": 0.3106044988380745,
+        "serialized_load_s": null,
+        "rope_s": 0.003419875050894916,
+        "concat_s": 0.0009103749180212617,
+        "cache_setup_s": 0.0014403340173885226,
+        "head_prefill_s": 0.07575408299453557,
+        "target_original_page_forward_tokens": 0,
+        "target_tail_s": 0.0792061670217663,
+        "first_token_s": 0.0003375830128788948,
+        "warm_ttft_s": 0.16106841701548547,
+        "cold_ttft_s": 0.47167291585355997
+      },
+      "native": {
+        "compile_s": 0,
+        "serialized_load_s": null,
+        "rope_s": 0.0,
+        "concat_s": 0.0,
+        "cache_setup_s": 0.0,
+        "head_prefill_s": 0.0,
+        "target_original_page_forward_tokens": 199,
+        "target_tail_s": 0.2427681660046801,
+        "first_token_s": 0.0003505420172587037,
+        "warm_ttft_s": 0.2431187080219388,
+        "cold_ttft_s": 0.2431187080219388
+      }
+    },
+    {
+      "page_compile_s": [
+        0.15001716697588563,
+        0.15994137502275407
+      ],
+      "independent": {
+        "compile_s": 0.3099585419986397,
+        "serialized_load_s": null,
+        "rope_s": 0.002844083937816322,
+        "concat_s": 0.0007561669917777181,
+        "cache_setup_s": 0.0012983750784769654,
+        "head_prefill_s": 0.07546612492296845,
+        "target_original_page_forward_tokens": 0,
+        "target_tail_s": 0.07934070809278637,
+        "first_token_s": 0.0003512919647619128,
+        "warm_ttft_s": 0.16005675098858774,
+        "cold_ttft_s": 0.47001529298722744
+      },
+      "native": {
+        "compile_s": 0,
+        "serialized_load_s": null,
+        "rope_s": 0.0,
+        "concat_s": 0.0,
+        "cache_setup_s": 0.0,
+        "head_prefill_s": 0.0,
+        "target_original_page_forward_tokens": 199,
+        "target_tail_s": 0.24223595892544836,
+        "first_token_s": 0.00032466696575284004,
+        "warm_ttft_s": 0.2425606258912012,
+        "cold_ttft_s": 0.2425606258912012
+      }
+    },
+    {
+      "page_compile_s": [
+        0.15058837493415922,
+        0.16017879196442664
+      ],
+      "independent": {
+        "compile_s": 0.31076716689858586,
+        "serialized_load_s": null,
+        "rope_s": 0.037029625033028424,
+        "concat_s": 0.0026287080254405737,
+        "cache_setup_s": 0.016810417058877647,
+        "head_prefill_s": 0.44597650005016476,
+        "target_original_page_forward_tokens": 0,
+        "target_tail_s": 0.5007121660746634,
+        "first_token_s": 0.00037608295679092407,
+        "warm_ttft_s": 1.0035334991989657,
+        "cold_ttft_s": 1.3143006660975516
+      },
+      "native": {
+        "compile_s": 0,
+        "serialized_load_s": null,
+        "rope_s": 0.0,
+        "concat_s": 0.0,
+        "cache_setup_s": 0.0,
+        "head_prefill_s": 0.0,
+        "target_original_page_forward_tokens": 199,
+        "target_tail_s": 0.2847738330019638,
+        "first_token_s": 0.00031174998730421066,
+        "warm_ttft_s": 0.285085582989268,
+        "cold_ttft_s": 0.285085582989268
+      }
+    },
+    {
+      "page_compile_s": [
+        0.14873279200401157,
+        0.16138966695871204
+      ],
+      "independent": {
+        "compile_s": 0.3101224589627236,
+        "serialized_load_s": null,
+        "rope_s": 0.0027988330693915486,
+        "concat_s": 0.0007634590147063136,
+        "cache_setup_s": 0.0013190419413149357,
+        "head_prefill_s": 0.07500137493479997,
+        "target_original_page_forward_tokens": 0,
+        "target_tail_s": 0.0782120410585776,
+        "first_token_s": 0.0004677500110119581,
+        "warm_ttft_s": 0.15856250002980232,
+        "cold_ttft_s": 0.46868495899252594
+      },
+      "native": {
+        "compile_s": 0,
+        "serialized_load_s": null,
+        "rope_s": 0.0,
+        "concat_s": 0.0,
+        "cache_setup_s": 0.0,
+        "head_prefill_s": 0.0,
+        "target_original_page_forward_tokens": 199,
+        "target_tail_s": 0.24370508396532387,
+        "first_token_s": 0.0003562920028343797,
+        "warm_ttft_s": 0.24406137596815825,
+        "cold_ttft_s": 0.24406137596815825
+      }
+    },
+    {
+      "page_compile_s": [
+        0.14887391601223499,
+        0.16158137493766844
+      ],
+      "independent": {
+        "compile_s": 0.31045529094990343,
+        "serialized_load_s": null,
+        "rope_s": 0.002887207898311317,
+        "concat_s": 0.0008753750007599592,
+        "cache_setup_s": 0.0013132499298080802,
+        "head_prefill_s": 0.07590837497264147,
+        "target_original_page_forward_tokens": 0,
+        "target_tail_s": 0.07910550001543015,
+        "first_token_s": 0.0003582920180633664,
+        "warm_ttft_s": 0.16044799983501434,
+        "cold_ttft_s": 0.47090329078491777
+      },
+      "native": {
+        "compile_s": 0,
+        "serialized_load_s": null,
+        "rope_s": 0.0,
+        "concat_s": 0.0,
+        "cache_setup_s": 0.0,
+        "head_prefill_s": 0.0,
+        "target_original_page_forward_tokens": 199,
+        "target_tail_s": 0.24324320803862065,
+        "first_token_s": 0.00036320905201137066,
+        "warm_ttft_s": 0.24360641709063202,
+        "cold_ttft_s": 0.24360641709063202
+      }
+    }
+  ],
+  "medians": {
+    "independent": {
+      "compile_s": 0.31045529094990343,
+      "rope_s": 0.002887207898311317,
+      "concat_s": 0.0008753750007599592,
+      "cache_setup_s": 0.0013190419413149357,
+      "head_prefill_s": 0.07575408299453557,
+      "target_original_page_forward_tokens": 0,
+      "target_tail_s": 0.0792061670217663,
+      "first_token_s": 0.0003582920180633664,
+      "warm_ttft_s": 0.16044799983501434,
+      "cold_ttft_s": 0.47090329078491777
+    },
+    "native": {
+      "compile_s": 0,
+      "rope_s": 0.0,
+      "concat_s": 0.0,
+      "cache_setup_s": 0.0,
+      "head_prefill_s": 0.0,
+      "target_original_page_forward_tokens": 199,
+      "target_tail_s": 0.24324320803862065,
+      "first_token_s": 0.0003505420172587037,
+      "warm_ttft_s": 0.24360641709063202,
+      "cold_ttft_s": 0.24360641709063202
+    }
+  },
+  "warmups": 2,
+  "trials": 5,
+  "item_id": "stage3_dev_A_semantic_2_000",
+  "raw_tokens": 199,
+  "memory_positions": 50,
+  "checkpoint_sha256": "b8384dd2eeaa87890a6b65e22f791183399764b93dd9a7f4e8a6e4ce13fca425",
+  "git_commit": "5504e72-dirty",
+  "timestamp_utc": "2026-09-08T01:16:18+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  }
+}

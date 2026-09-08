@@ -2,8 +2,8 @@
 
 **Rule for this file: nothing here gets implemented until the baseline it depends on
 works.** Each entry states its own precondition; that precondition is the gate, not a
-suggestion. The first entry (Stage 2c) is the designated *next* experiment and is gated
-specifically on Stage 2b producing a full-precision result that beats `BUDGET`.
+suggestion. The historical Stage 2c suggestion below is superseded by the 2026-09-07
+Stage 3 decision: test genuine composition first with the frozen carrier.
 
 Every item below is a plausible improvement to a system that does not yet exist. Adding
 any of them early would confound the one measurement this project is actually trying to
@@ -12,10 +12,13 @@ make — whether independently compiled context state composes at all. Each entr
 
 ---
 
-## Stage 2c — Axis B: bits per state (the immediate next experiment if 2b passes)
+## Axis B: bits per state — deferred until a clean Stage 3 pass
 
-**This is the designated next experiment, not a speculative idea.** Recorded here because
-it must not be started until Stage 2b has a full-precision result.
+**Deferred.** Stage 2b is INCONCLUSIVE. Stage 3 tests cross-page composition without
+quantization or further training. A clean Stage 3 pass may justify Axis B next
+(chronological Stage 4 naming preferred). Interference instead motivates a separate
+retrieval/landmark-selection experiment; exact-terminal failures may later motivate
+a raw-page tier. None is implemented during Stage 3.
 
 Keep the two compression axes strictly separate (see `RELATED_WORK.md` §3):
 
@@ -46,7 +49,8 @@ speedup.** It is a hypothesis until both components are measured, and it says no
 about latency: Axis A removes attention work, Axis B removes bytes, and on unified memory
 those are not the same bottleneck.
 
-**Precondition:** a full-precision Stage 2b result that beats `BUDGET`. Quantizing a
+**Precondition:** a clean Stage 3 composability pass using the frozen full-precision
+carrier, in addition to its historical advantage over `BUDGET`. Quantizing a
 compressor that does not work would confound "the learned state is lossy" with "the
 quantizer is lossy".
 

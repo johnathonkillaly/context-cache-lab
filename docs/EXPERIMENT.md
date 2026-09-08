@@ -341,3 +341,18 @@ rationalized after the fact.
 ## 10. Amendments
 
 *(none — criteria frozen 2026-09-07)*
+
+### 2026-09-07 — separate Stage 3 composition experiment
+
+User-directed continuation selects the frozen-carrier path, not further Stage 2b
+training. Stage 2b remains **INCONCLUSIVE** and all historical criteria/results above
+remain visible and unchanged. A usable carrier beating BUDGET motivates testing a
+previously unanswered question: cross-page composition. The earlier corpus's page
+shuffle did not test order-dependent facts.
+
+The separately frozen [Stage 3 protocol](STAGE3_PROTOCOL.md) defines new development
+and held-out draws, native/missing-page validity, 4× primary gates, controls, timing,
+and PASS/PARTIAL/FAIL interpretation. Original held-out Draw B is not used. Its
+criteria supplement this record and do not retroactively amend §7 or §7b. No further
+training, quantization, retrieval, fallback, or other deferred extension is authorized
+within Stage 3. Corpus and step-2200 checkpoint hashes: `results/stage3/freeze.json`.
