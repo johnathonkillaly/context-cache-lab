@@ -10,6 +10,13 @@ any of them early would confound the one measurement this project is actually tr
 make — whether independently compiled context state composes at all. Each entry records
 *what it is*, *what it might buy*, and *the specific precondition that must be met first*.
 
+**2026-09-08 outcome:** Stage 3 **FAIL**. Independent and joint quality are both at
+floor even with two relevant pages; the interference ratio is undefined. Axis B
+remains blocked. A retrieval/landmark remedy is not established, and no semantic-over-
+exact generated-answer advantage appears on these new tasks. Preserve the negative
+result. Any further diagnosis must be separately requested and preregistered on a new
+draw; do not implement any deferred optimization below to rescue this gate.
+
 ---
 
 ## Axis B: bits per state — deferred until a clean Stage 3 pass

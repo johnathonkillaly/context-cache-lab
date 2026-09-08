@@ -356,3 +356,20 @@ and PASS/PARTIAL/FAIL interpretation. Original held-out Draw B is not used. Its
 criteria supplement this record and do not retroactively amend §7 or §7b. No further
 training, quantization, retrieval, fallback, or other deferred extension is authorized
 within Stage 3. Corpus and step-2200 checkpoint hashes: `results/stage3/freeze.json`.
+
+### 2026-09-08 — Stage 3 result recorded, criteria unchanged
+
+The single new `stage3_test_B` 4× run completed: 2,358 rows / 210 variants. Frozen
+Stage 3 verdict **FAIL**. On 13 native-valid two-page semantic items, INDEPENDENT and
+JOINT both have zero clean accuracy; missing-page rank dependence is 1/13. JOINT tax
+and distractor-retention ratios are non-informative at the quality floor. Native
+order passes all 12 original/shuffled pairs, compiled order none. Weak native ceilings
+limit the longer-chain diagnostics. See `results/stage3/stage3_report.md` for all
+controls, per-class results and the 12 requested answers.
+
+Historical §7/§7b criteria and Stage 1–2 results remain unchanged. Stage 2b remains
+INCONCLUSIVE; original Draw B was not used. Do not proceed to quantization on this
+result. This carrier fails useful task transfer/composition here; joint failure and
+the absence of a direct page-local assay prevent assigning the whole loss to
+independence. The finding does not establish page selection as the remedy. No new
+training, retrieval, fallback, quantization, or secondary-ratio sweep was run.

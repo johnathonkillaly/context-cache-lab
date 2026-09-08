@@ -125,15 +125,35 @@ A/B value pools asserted disjoint); NATIVE and NOCTX measured on draw A at 1K–
 **Stage 2b — complete. Gate verdict: INCONCLUSIVE** (not FAILED). Thresholds were frozen
 before the compressor was written and have **not** been moved. Results in §7.
 
-**Stage 3 — harness validated; final evaluation pending.** Frozen-carrier continuation
-selected by the user on 2026-09-07. No Stage 2b training or quantization. New protocol:
-`docs/STAGE3_PROTOCOL.md`; new draws/checkpoint hashes: `results/stage3/freeze.json`.
+**Stage 3 — complete, gate FAIL (2026-09-08).** One held-out 4× evaluation of the
+unchanged step-2200 carrier: 2,358 rows / 210 variants. Independent and joint generation
+both fail all new chain/order tasks. This does **not** change Stage 2b INCONCLUSIVE.
+Protocol: `docs/STAGE3_PROTOCOL.md`; report: `results/stage3/stage3_report.md`;
+gate: `results/stage3/stage3_gate.json`; identities: `results/stage3/freeze.json`.
+No further training, quantization, retrieval, or fallback. Secondary ratios unrun.
 
 **Draw B has deliberately not been run.** It is held out for the single final
 evaluation against the frozen criteria. Do not run any condition against draw B — not
 even a baseline — until the compiled conditions exist.
 
 ## 6. Important failures and gotchas
+
+- **Stage 3 fails before distractor accumulation.** INDEPENDENT is 0/13 on valid
+  two-page semantic items; JOINT is also 0/13. A zero/zero scaling ratio is undefined,
+  and zero/zero JOINT equality is non-informative, never a pass. Do not claim that
+  retrieval, more compression, or quantization solves a failure already present at N=2.
+- **Stage 3 attribution is limited.** New branching pages are roughly 100 tokens,
+  versus ~256-token training chunks. Both joint and independent states lose terminal
+  details. There is no direct page-local query assay on the new pages, so within-page
+  fidelity/task transfer cannot be separated completely from cross-page combination.
+- **Stage 3 native ceilings:** 13/24 semantic two-page items satisfy all native-only
+  validity checks. Some secondary cells have zero valid items; two-hop identifiers
+  have only 1/6. Do not treat those cells as proof of composition or blame all longer
+  chain failures on compression. Native order is 12/12 paired successes, so that
+  operational task failure is meaningful, though it is not isolated from content loss.
+- **Stage 3 broad failure was checked against the historical query path:** a post-run
+  development-only comparison matched prediction, margin and gold logprob exactly.
+  Held-out conditions were not rerun. See `results/stage3/historical_path_qa.json`.
 
 - **Stage 3 QA:** scripts need the existing explicit `src` path setup; this venv does
   not expose `ccl` to standalone scripts automatically. Fixed before evaluation.
@@ -178,12 +198,46 @@ even a baseline — until the compiled conditions exist.
 
 ## 7. Current results
 
-### Stage 3 preliminary QA (not a result gate)
+### Stage 3 — FAIL, frozen 4× carrier
 
-96 fast tests pass; live ratio-1 identity and learned pre-RoPE/immutability tests pass
-(2 live tests). Two development items / 22 rows in `results/stage3/dev_smoke.jsonl`.
-No held-out quality inspected yet. Frozen protocol and full report machinery added.
-Historical Stage 1–2 results below are unchanged.
+Single held-out `stage3_test_B` run: 2,358 rows, 210 variants, ~59 minutes. Original
+Draw B untouched. All prior Stage 1–2 result files and carrier source remain unchanged;
+`pre-stage3-frozen` tags historical commit `5504e72`.
+
+| Primary criterion | Measured | Required | Result |
+|---|---|---|---|
+| Native-normalized semantic quality | 0/13 = 0.000 | ≥0.60 | MISS |
+| Every missing page contributes (rank margin) | 1/13 = 0.077 | ≥0.80 | MISS |
+| Independent ≥85% of informative JOINT | both 0.000 | JOINT retained ≥0.40 first | NON-INFORMATIVE |
+| Q(16)/Q(2) | 0/0, undefined | ≥0.75 | NON-INFORMATIVE |
+| Gap over NOCTX / RANDOM / WRONGPAGE | 0 / 0 / 0 | each ≥0.15 | MISS |
+
+On valid primary items NATIVE is 13/13; INDEPENDENT, JOINT, BUDGET, NOCTX, RANDOM,
+WRONGPAGE and both compiled single-page conditions are all 0/13. Independent accuracy
+Wilson 95% CI: 0–22.8%. Mean margins: NATIVE +3.960, INDEPENDENT −2.474, JOINT −1.493,
+NOCTX −1.103, RANDOM −0.763, WRONGPAGE −2.240. Native solves 19/24 before validity
+filtering; terminal-page-only guesses account for 6/24.
+
+All independent generated answers are incorrect across semantic/identifier/number/hash
+terminals at 2/3/4 hops. Per-class controls and ranking metrics are in the report;
+no semantic-over-exact generation advantage is established here. Native semantic
+accuracy falls to 2/6 at 3 hops and 1/6 at 4 hops, limiting depth interpretation.
+Native order solves 12/12 original/shuffled pairs, independent and joint solve 0/12.
+Independent Q stays at zero through N=32 and all placements: this is a floor, not
+low interference or placement robustness.
+
+Decision: stop treating this frozen carrier as validated general composable memory.
+The immediate unresolved issue is carrier/task-transfer fidelity, not demonstrated
+page-count interference. Quantization and a retrieval remedy are not justified by
+this run. Pure-function compilation, pre-RoPE storage and repositioning work
+mechanically; this does not establish semantic usefulness. Do not reinterpret the
+result as a failure of every possible independently compiled memory architecture.
+
+Validation: 101 fast tests; two pre-run live RoPE tests; post-run historical-path
+numerical equivalence; complete coverage/budget/shape/provenance/hash audit. Raw rows:
+`results/stage3/stage3_test_B_r4.jsonl`; grouped metrics/accounting:
+`results/stage3/condition_summary.csv`; 12-question interpretation in
+`results/stage3/stage3_report.md`. Historical Stage 1–2 results below are unchanged.
 
 Raw: `results/raw/stage1_baseline_drawA.json`. Tables: `results/tables/`.
 Report: `results/tables/stage1_report_drawA.md`.
@@ -399,6 +453,22 @@ forward pass over the context — followed by a short forward over ~90 tail/ques
 no speedup without cold cost, warm cost, and the amortization curve.
 
 ## 8. Next steps
+
+**2026-09-08 decision after Stage 3:** preserve FAIL and stop this optimization path.
+Do not rerun `stage3_test_B`, train Stage 2b, add quantization, retrieval or fallback.
+No next optimization experiment is justified. A future diagnostic, if separately
+requested, needs a new preregistration/draw and direct page-local recall controls to
+separate task-transfer fidelity from composition; that work is not implemented here.
+Original Draw B remains untouched. Secondary 2×/8×/16× sweeps were not run and cannot
+be used to relabel the failed primary 4× gate.
+
+Reporting-only commands (no model evaluation):
+`.venv/bin/python scripts/check_stage3_results.py`, then
+`.venv/bin/python scripts/stage3_report.py` and
+`.venv/bin/python scripts/stage3_report_details.py`.
+
+Historical launch decision and commands (evaluation is now complete; do not rerun):
+
 
 **2026-09-07 decision (supersedes the historical options below):** accept Stage 2b
 INCONCLUSIVE and test cross-page composition with the unchanged step-2200 checkpoint.

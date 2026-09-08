@@ -1,0 +1,21 @@
+{
+  "scope": "post-run development-only equivalence, not a new held-out evaluation",
+  "item_id": "stage3_dev_A_semantic_2_000",
+  "new_prediction": "ceremonial rubber boots",
+  "historical_prediction": "ceremonial rubber boots",
+  "new_rank_margin": 2.7975387573242188,
+  "historical_rank_margin": 2.7975387573242188,
+  "gold_logprob_delta": 0.0,
+  "passed": true,
+  "checkpoint_sha256": "b8384dd2eeaa87890a6b65e22f791183399764b93dd9a7f4e8a6e4ce13fca425",
+  "git_commit": "e9325c6-dirty",
+  "timestamp_utc": "2026-09-08T12:30:30+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  }
+}

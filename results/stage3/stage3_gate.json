@@ -1,0 +1,1109 @@
+{
+  "verdict": "FAIL",
+  "stage2b_verdict": "INCONCLUSIVE",
+  "validity": {
+    "sufficient": true,
+    "primary_n": 24,
+    "valid_n": 13,
+    "native_single_page_rates": [
+      0.25,
+      0.0
+    ],
+    "valid_ids": [
+      "stage3_test_B_semantic_2_000",
+      "stage3_test_B_semantic_2_004",
+      "stage3_test_B_semantic_2_005",
+      "stage3_test_B_semantic_2_006",
+      "stage3_test_B_semantic_2_009",
+      "stage3_test_B_semantic_2_010",
+      "stage3_test_B_semantic_2_011",
+      "stage3_test_B_semantic_2_012",
+      "stage3_test_B_semantic_2_016",
+      "stage3_test_B_semantic_2_017",
+      "stage3_test_B_semantic_2_018",
+      "stage3_test_B_semantic_2_019",
+      "stage3_test_B_semantic_2_021"
+    ]
+  },
+  "gates": {
+    "1_retained_quality": {
+      "value": 0.0,
+      "threshold": 0.6,
+      "pass": false
+    },
+    "2_missing_page_dependence": {
+      "value": 0.07692307692307693,
+      "threshold": 0.8,
+      "pass": false
+    },
+    "3_independent_tax": {
+      "independent_retained": 0.0,
+      "joint_retained": 0.0,
+      "threshold": 0.85,
+      "informative": false,
+      "pass": false
+    },
+    "4_scaling": {
+      "q2": 0.0,
+      "q16": 0.0,
+      "retention": null,
+      "threshold": 0.75,
+      "informative": false,
+      "pass": false
+    },
+    "5_controls": {
+      "gaps": {
+        "NOCTX": 0.0,
+        "RANDOM": 0.0,
+        "WRONGPAGE": 0.0
+      },
+      "threshold": 0.15,
+      "pass": false
+    }
+  },
+  "diagnostic_collapses": [
+    "order collapse"
+  ],
+  "primary_valid_q": {
+    "NATIVE": 1.0,
+    "NOCTX": 0.0,
+    "INDEPENDENT": 0.0,
+    "JOINT": 0.0,
+    "BUDGET": 0.0,
+    "RANDOM": 0.0,
+    "WRONGPAGE": 0.0,
+    "INDEPENDENT_LOO_0": 0.0,
+    "INDEPENDENT_LOO_1": 0.0
+  },
+  "primary_valid_wilson95": [
+    0,
+    0.22810184305529166
+  ],
+  "missing_page_dependence_wilson95": [
+    0.013710066379696323,
+    0.3331453392824736
+  ],
+  "cells": {
+    "2_semantic": {
+      "NATIVE": {
+        "q": 0.7916666666666666,
+        "margin": 2.648197037273842,
+        "exact_match": 0.0,
+        "semantic_correct": 0.7916666666666666,
+        "rank_accuracy": 0.7916666666666666
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.203100899855296,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -1.8805216550827026,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.375
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.1701595882574718,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.4583333333333333
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.2694144248962402,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.25
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.9663811524709066,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.375
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.3929045597712197,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "n": 24,
+      "valid_n": 13,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.5416666666666666,
+      "mean_item_rank_gain": -1.4735234181086223
+    },
+    "2_identifier": {
+      "NATIVE": {
+        "q": 1.0,
+        "margin": 3.134295185407003,
+        "exact_match": 0.6666666666666666,
+        "semantic_correct": 1.0,
+        "rank_accuracy": 1.0
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.5434519449869791,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -1.2175563077131908,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.0464178308223684,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.6220409075419108,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.3607957760492961,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -1.0095213254292805,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "n": 6,
+      "valid_n": 1,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.16666666666666663,
+      "mean_item_rank_gain": -1.2860269198815029
+    },
+    "2_number": {
+      "NATIVE": {
+        "q": 1.0,
+        "margin": 4.517605622609456,
+        "exact_match": 1.0,
+        "semantic_correct": 1.0,
+        "rank_accuracy": 1.0
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.4525643587112427,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -1.0372659961382549,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.8469198147455852,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.4226087729136149,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.07861967881520589,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.0682973066965739,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "n": 6,
+      "valid_n": 6,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 1.0,
+      "mean_item_rank_gain": -0.9654796719551086
+    },
+    "2_hash": {
+      "NATIVE": {
+        "q": 1.0,
+        "margin": 1.9444262766175893,
+        "exact_match": 0.8333333333333334,
+        "semantic_correct": 1.0,
+        "rank_accuracy": 1.0
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.3827911615371704,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": 0.014216730991999308,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.6666666666666666
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": 0.5663255658000708,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.6666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.459555705388387,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.31492578983306885,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.4131952126820882,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "n": 6,
+      "valid_n": 4,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.6666666666666667,
+      "mean_item_rank_gain": -0.3709165056546529
+    },
+    "3_semantic": {
+      "NATIVE": {
+        "q": 0.3333333333333333,
+        "margin": -0.8730356660601046,
+        "exact_match": 0.0,
+        "semantic_correct": 0.3333333333333333,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.5719536940256754,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.035946846008301,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.7838843663533528,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.4854200681050618,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -2.1417790253957114,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.2186495463053384,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "n": 6,
+      "valid_n": 0,
+      "retained": 0.0,
+      "valid_retained": null,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.0,
+      "mean_item_rank_gain": -0.9398876825968424
+    },
+    "3_identifier": {
+      "NATIVE": {
+        "q": 0.8333333333333334,
+        "margin": 1.8497871536410144,
+        "exact_match": 0.5,
+        "semantic_correct": 0.8333333333333334,
+        "rank_accuracy": 0.8333333333333334
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.5708444913228353,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -0.8422249058882395,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.3293067514896393,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.6505715847015381,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.6237956682840983,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.6395942370096842,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "n": 6,
+      "valid_n": 3,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.5,
+      "mean_item_rank_gain": -0.23795743783315024
+    },
+    "3_number": {
+      "NATIVE": {
+        "q": 0.6666666666666666,
+        "margin": 1.1469561887941548,
+        "exact_match": 0.6666666666666666,
+        "semantic_correct": 0.6666666666666666,
+        "rank_accuracy": 0.6666666666666666
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.3039187590281169,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -1.203040103117625,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.0650568455457687,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.3069659074147542,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.0936042070388794,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.2604031165440877,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "n": 6,
+      "valid_n": 3,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.5,
+      "mean_item_rank_gain": -1.6461552580197651
+    },
+    "3_hash": {
+      "NATIVE": {
+        "q": 0.3333333333333333,
+        "margin": 0.37155230648219345,
+        "exact_match": 0.3333333333333333,
+        "semantic_correct": 0.3333333333333333,
+        "rank_accuracy": 0.5
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.5374179283777872,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -1.1786348273356755,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.170443631708622,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.45512978235880536,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.25977909564971924,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.3635409673055013,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "n": 6,
+      "valid_n": 1,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.16666666666666666,
+      "mean_item_rank_gain": -0.980907753109932
+    },
+    "4_semantic": {
+      "NATIVE": {
+        "q": 0.16666666666666666,
+        "margin": -2.8466725216664295,
+        "exact_match": 0.0,
+        "semantic_correct": 0.16666666666666666,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -3.1206536293029785,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -3.362134059270223,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.496379574139913,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -4.2589545249938965,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -2.36933970451355,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -3.9133320649464927,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "n": 6,
+      "valid_n": 0,
+      "retained": 0.0,
+      "valid_retained": null,
+      "composition_gain": 0.0,
+      "native_composition_gain": -0.16666666666666666,
+      "mean_item_rank_gain": -2.1099867026011148
+    },
+    "4_identifier": {
+      "NATIVE": {
+        "q": 0.3333333333333333,
+        "margin": 0.03240602292957995,
+        "exact_match": 0.3333333333333333,
+        "semantic_correct": 0.3333333333333333,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.4121435880661011,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -0.3729262749354045,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -0.37051259477933246,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.6404320398966471,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.32479385534922284,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.6722830136617025,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.0
+      },
+      "n": 6,
+      "valid_n": 0,
+      "retained": 0.0,
+      "valid_retained": null,
+      "composition_gain": 0.0,
+      "native_composition_gain": -0.16666666666666669,
+      "mean_item_rank_gain": -0.5323458313941956
+    },
+    "4_number": {
+      "NATIVE": {
+        "q": 0.5,
+        "margin": -1.0701102316391673,
+        "exact_match": 0.5,
+        "semantic_correct": 0.5,
+        "rank_accuracy": 0.5
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": 0.08135175704956055,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": 0.024330233534177143,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -0.11588363846143086,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.6666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -0.1326566537221273,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.21484275658925375,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.5242127577463785,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "n": 6,
+      "valid_n": 1,
+      "retained": 0.0,
+      "valid_retained": 0.0,
+      "composition_gain": 0.0,
+      "native_composition_gain": 0.16666666666666669,
+      "mean_item_rank_gain": -0.2729463030894597
+    },
+    "4_hash": {
+      "NATIVE": {
+        "q": 0.0,
+        "margin": -0.9875946782117353,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -0.8220165173212687,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -0.9841997176408768,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.075897440314293,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.16666666666666666
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.1095318794250488,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.5
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -0.5658142964045206,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -0.7860252062479655,
+        "exact_match": 0.0,
+        "semantic_correct": 0.0,
+        "rank_accuracy": 0.3333333333333333
+      },
+      "n": 6,
+      "valid_n": 0,
+      "retained": null,
+      "valid_retained": null,
+      "composition_gain": 0.0,
+      "native_composition_gain": -0.16666666666666666,
+      "mean_item_rank_gain": -0.530289446314176
+    }
+  },
+  "order": {
+    "NATIVE": {
+      "ordered": 1.0,
+      "shuffled_relabelled": 1.0,
+      "paired": 1,
+      "n": 12
+    },
+    "NOCTX": {
+      "ordered": 0.0,
+      "shuffled_relabelled": 0.0,
+      "paired": 0,
+      "n": 12
+    },
+    "INDEPENDENT": {
+      "ordered": 0.0,
+      "shuffled_relabelled": 0.0,
+      "paired": 0,
+      "n": 12
+    },
+    "JOINT": {
+      "ordered": 0.0,
+      "shuffled_relabelled": 0.0,
+      "paired": 0,
+      "n": 12
+    },
+    "BUDGET": {
+      "ordered": 0.0,
+      "shuffled_relabelled": 0.0,
+      "paired": 0,
+      "n": 12
+    },
+    "RANDOM": {
+      "ordered": 0.0,
+      "shuffled_relabelled": 0.0,
+      "paired": 0,
+      "n": 12
+    },
+    "WRONGPAGE": {
+      "ordered": 0.0,
+      "shuffled_relabelled": 0.0,
+      "paired": 0,
+      "n": 12
+    }
+  },
+  "scaling_position": {
+    "base": {
+      "NATIVE": {
+        "q": 0.8333333333333334,
+        "margin": 2.3525072593347818
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.5660764972368875
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.9603195389111836
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.7578922112782795
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.4624462525049846
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -3.255625327428182
+      },
+      "n": 12
+    },
+    "pages_4": {
+      "NATIVE": {
+        "q": 0.5833333333333334,
+        "margin": 0.890978773992784
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.4917455514272056
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.1266626119613647
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.2792527675628662
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.6696583429972331
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -3.017192522684733
+      },
+      "n": 12
+    },
+    "pages_8": {
+      "NATIVE": {
+        "q": 0.5,
+        "margin": 0.5135014041127329
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.308113137880961
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -1.9815609256426494
+      },
+      "BUDGET": {
+        "q": 0.8333333333333334,
+        "margin": 2.294915142891
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.8748393456141155
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.9667564630508423
+      },
+      "n": 12
+    },
+    "pages_16": {
+      "NATIVE": {
+        "q": 0.75,
+        "margin": 1.6619359732944818
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.399901588757833
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.015170713265737
+      },
+      "BUDGET": {
+        "q": 0.6666666666666666,
+        "margin": 1.2804133842811847
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.8977296352386475
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.8019197384516397
+      },
+      "n": 12
+    },
+    "pages_32": {
+      "NATIVE": {
+        "q": 0.5833333333333334,
+        "margin": 0.9272587408229628
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.424878478050232
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.1505561073621116
+      },
+      "BUDGET": {
+        "q": 0.6666666666666666,
+        "margin": 0.6397913745235021
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.778693397839864
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.528801163037618
+      },
+      "n": 12
+    },
+    "first_middle": {
+      "NATIVE": {
+        "q": 0.3333333333333333,
+        "margin": -1.562496729687761
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.3817098140716553
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.3429532647132874
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -2.0963330268859863
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.9740783373514812
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.790933092435201
+      },
+      "n": 12
+    },
+    "middle_middle": {
+      "NATIVE": {
+        "q": 0.5833333333333334,
+        "margin": 0.4089806352754219
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.3973475297292075
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.4611966609954834
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.5813586711883545
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.9058596293131511
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.8002278010050454
+      },
+      "n": 12
+    },
+    "middle_last": {
+      "NATIVE": {
+        "q": 0.5,
+        "margin": 0.07359418431227027
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.3209498723347983
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.508892317612966
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.5813586711883545
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.7791283925374348
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.7776129643122354
+      },
+      "n": 12
+    },
+    "last_two": {
+      "NATIVE": {
+        "q": 0.6666666666666666,
+        "margin": 1.4024292043232627
+      },
+      "INDEPENDENT": {
+        "q": 0.0,
+        "margin": -2.3011742432912192
+      },
+      "JOINT": {
+        "q": 0.0,
+        "margin": -2.6068795323371887
+      },
+      "BUDGET": {
+        "q": 0.0,
+        "margin": -1.5813586711883545
+      },
+      "NOCTX": {
+        "q": 0.0,
+        "margin": -1.7771692276000977
+      },
+      "RANDOM": {
+        "q": 0.0,
+        "margin": -1.7088984648386638
+      },
+      "WRONGPAGE": {
+        "q": 0.0,
+        "margin": -2.801630655924479
+      },
+      "n": 12
+    }
+  }
+}

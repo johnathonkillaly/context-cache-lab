@@ -1,0 +1,39 @@
+{
+  "config": {
+    "draw": "stage3_test_B",
+    "ratio": 4,
+    "suite": "all",
+    "limit": null,
+    "native_only": false,
+    "sources": {
+      "src/ccl/__init__.py": "5ba12bc01d55d6da1553cff58f4e3aa86d492f49758f2c99ad7f36eed06d2a2c",
+      "src/ccl/compress.py": "c4607099f85217ad5d394c8d495f034997177754786b18458d241098a3ab6fe0",
+      "src/ccl/compressor.py": "cbeed14f0a6eaa0788067a1681b44a8f5df16b8a0b3cd1b1d13a05d608e48a97",
+      "src/ccl/corpus.py": "ff985b26a1011dc513d573272a61e6b56f64fa95d7f7f55e615d8de8c04d9a1e",
+      "src/ccl/metrics.py": "56808fb1f189de53e4ebecdd5386d91d0e732c8615553e06590f5c8f74618350",
+      "src/ccl/provenance.py": "2e47ba327645824520268f6f06515b2fb04815f71705ee7bb2254ada26f6161d",
+      "src/ccl/rope.py": "0d57bc28751024310d6e596848bde2dfa96548d71dfde019ee0c74763da6433f",
+      "src/ccl/stage3_corpus.py": "00b0e1701750452149315a99c66aea790905b60dd69e78e7cc19e779d7961c89",
+      "src/ccl/stage3_eval.py": "131ff75ca7ca7b180dacd54f0bb72c046db8740ed5337fbabd2d08ba924f237b",
+      "src/ccl/stage3_report.py": "43c54282d487c8cda98188a7d93f01a3961f069bb519be6e580bc525b86d8ff4",
+      "src/ccl/target.py": "befa3dc194fcd45eaa68d3d6c59ca347dcf9a57ff78fcb91943a322aeb5d1ea7",
+      "src/ccl/timing.py": "64c81f406c1c039729286a9391cbe72298df8820ede955a786916e5c50f80c72",
+      "src/ccl/train.py": "64e3fdaa6511eff51d26bc31ee329de8456db1dbd2b03789716e9be48c5112c7",
+      "docs/STAGE3_PROTOCOL.md": "f181b2f308a2e36303f7cce472f227df3f5ca560d180ecd6c0eecb7152758ae3",
+      "scripts/stage3_composition_eval.py": "927001e05b9a16843579a75b2c2a8c8c3ef7e83bd036f369b49eec037cc4ac77",
+      "scripts/stage3_page_scaling.py": "bcf132657127e780e7f36d01242adc4ea3e379afff78141ac3d94e62bd939c6b"
+    },
+    "checkpoint_sha256": "b8384dd2eeaa87890a6b65e22f791183399764b93dd9a7f4e8a6e4ce13fca425",
+    "corpus_sha256": "0dfa7f88e8ae93dfe5ce0545793a6813c701cf3f8977b424d05e02a00912dec4"
+  },
+  "git_commit": "e9325c6-dirty",
+  "timestamp_utc": "2026-09-08T01:18:21+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  }
+}
