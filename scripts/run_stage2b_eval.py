@@ -183,11 +183,15 @@ def run_doc(tm, extractor, doc: Document, other_doc: Document, args) -> list[dic
             order = list(range(len(pages)))
             random.Random(0).shuffle(order)
             emit("SHUFFLE_PAGES", ratio, [pages[i] for i in order], {})
-            wrong = extractor.compile_chunks(
-                [tm.encode(c.text) for c in other_doc.chunks], ratio
-            )
-            emit("WRONGPAGE", ratio, wrong, {})
-            del wrong
+            if other_doc.doc_id == doc.doc_id:
+                # Would silently reduce to LEARNED and look like an answer leak.
+                print("  WARN: only one document - skipping WRONGPAGE control")
+            else:
+                wrong = extractor.compile_chunks(
+                    [tm.encode(c.text) for c in other_doc.chunks], ratio
+                )
+                emit("WRONGPAGE", ratio, wrong, {})
+                del wrong
         del pages
         _free()
 

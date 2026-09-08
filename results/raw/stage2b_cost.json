@@ -1,0 +1,120 @@
+{
+  "stage": "2b-cost",
+  "doc_id": "A-s11-d0-t4096",
+  "length": 4096,
+  "model_id": "Qwen/Qwen3-4B",
+  "ckpt_step": 2200,
+  "native": {
+    "prefill_s": 3.5688118329271674,
+    "ttft_s": 3.218592542107217,
+    "n_tokens": 4325
+  },
+  "reuse_counts": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "results": [
+    {
+      "ratio": 2.0,
+      "n_active_positions": 2212,
+      "n_native_positions": 4325,
+      "position_compression": 1.9552441229656419,
+      "t_compile_s": 6.029781457968056,
+      "t_compose_s": 0.03765604202635586,
+      "ttft_warm_s": 0.1385092920390889,
+      "ttft_cold_s": 6.168290750007145,
+      "ttft_native_s": 3.218592542107217,
+      "warm_speedup": 23.237376314066303,
+      "cold_speedup": 0.5217965028810435,
+      "amortized": {
+        "1": 6.168290750007145,
+        "2": 3.153400021023117,
+        "4": 1.645954656531103,
+        "8": 0.8922319742850959,
+        "16": 0.5153706331620924,
+        "32": 0.32693996260059066
+      },
+      "breakeven_queries": 2
+    },
+    {
+      "ratio": 4.0,
+      "n_active_positions": 1157,
+      "n_native_positions": 4325,
+      "position_compression": 3.738115816767502,
+      "t_compile_s": 5.308754458033945,
+      "t_compose_s": 0.028165083029307425,
+      "ttft_warm_s": 0.11425366695038974,
+      "ttft_cold_s": 5.423008124984335,
+      "ttft_native_s": 3.218592542107217,
+      "warm_speedup": 28.170584174814863,
+      "cold_speedup": 0.5935068633363912,
+      "amortized": {
+        "1": 5.423008124984335,
+        "2": 2.7686308959673624,
+        "4": 1.441442281458876,
+        "8": 0.7778479742046329,
+        "16": 0.44605082057751133,
+        "32": 0.28015224376395054
+      },
+      "breakeven_queries": 2
+    },
+    {
+      "ratio": 8.0,
+      "n_active_positions": 629,
+      "n_native_positions": 4325,
+      "position_compression": 6.875993640699523,
+      "t_compile_s": 4.868747999949846,
+      "t_compose_s": 0.025457666954025626,
+      "ttft_warm_s": 0.1020063329488039,
+      "ttft_cold_s": 4.97075433289865,
+      "ttft_native_s": 3.218592542107217,
+      "warm_speedup": 31.552869798021273,
+      "cold_speedup": 0.6475058565669094,
+      "amortized": {
+        "1": 4.97075433289865,
+        "2": 2.536380332923727,
+        "4": 1.3191933329362655,
+        "8": 0.7105998329425347,
+        "16": 0.4063030829456693,
+        "32": 0.2541547079472366
+      },
+      "breakeven_queries": 2
+    },
+    {
+      "ratio": 16.0,
+      "n_active_positions": 365,
+      "n_native_positions": 4325,
+      "position_compression": 11.849315068493151,
+      "t_compile_s": 4.723138125031255,
+      "t_compose_s": 0.027791542001068592,
+      "ttft_warm_s": 0.10514937504194677,
+      "ttft_cold_s": 4.828287500073202,
+      "ttft_native_s": 3.218592542107217,
+      "warm_speedup": 30.60971632806413,
+      "cold_speedup": 0.6666116178993939,
+      "amortized": {
+        "1": 4.828287500073202,
+        "2": 2.4667184375575744,
+        "4": 1.2859339062997606,
+        "8": 0.6955416406708537,
+        "16": 0.4003455078564002,
+        "32": 0.2527474414491735
+      },
+      "breakeven_queries": 2
+    }
+  ],
+  "git_commit": "089ff66-dirty",
+  "timestamp_utc": "2026-09-08T00:27:24+00:00",
+  "env": {
+    "python": "3.12.14",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.14.0",
+    "mps_available": true,
+    "transformers": "5.16.1"
+  }
+}

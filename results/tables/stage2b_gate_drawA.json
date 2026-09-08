@@ -1,0 +1,21 @@
+{
+  "verdict": "INCONCLUSIVE",
+  "failed_reasons": [],
+  "native": 0.9583333333333334,
+  "noctx": 0.0,
+  "learned_4x": 0.3888888888888889,
+  "budget_4x": 0.2222222222222222,
+  "recovery_4x": 0.22641509433962265,
+  "learned_8x": 0.3472222222222222,
+  "semantic_margin_4x": 1.657722035707593,
+  "thresholds": {
+    "failed_margin_over_budget": 0.05,
+    "failed_learned_at_4x": 0.3,
+    "promising_learned_at_4x": 0.4,
+    "promising_delta_noctx": 0.35,
+    "promising_semantic_margin": 2.0,
+    "promising_joint_rel_tol": 0.1,
+    "strong_recovery_at_4x": 0.7,
+    "strong_learned_at_8x": 0.35
+  }
+}

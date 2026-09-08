@@ -122,7 +122,10 @@ A/B value pools asserted disjoint); NATIVE and NOCTX measured on draw A at 1K–
 **Stage 2a — complete.** Training-free compression floor measured (8 documents at 4K and
 16K, 1,368 evaluations). Result below; it changes what Stage 2 has to beat.
 
-**Stage 2b (learned compressor) — not started.** This is the next piece of work.
+**Stage 2b — complete. Gate verdict: INCONCLUSIVE** (not FAILED). Thresholds were frozen
+before the compressor was written and have **not** been moved. Results in §7.
+
+**Stage 3 — not started.** See §8 for what the Stage 2b evidence says about it.
 
 **Draw B has deliberately not been run.** It is held out for the single final
 evaluation against the frozen criteria. Do not run any condition against draw B — not
@@ -265,31 +268,150 @@ Compression sweep (`clean_hit`):
    the effect is small, but the sign is consistent and it is the same failure mode
    Stage 3 is exposed to.
 
+### Stage 2b: learned compressed context state
+
+Raw: `results/raw/stage2b_eval_drawA.json`, `stage2b_train.json`, `stage2b_cost.json`.
+Report: `results/tables/stage2b_report_drawA.md`. Gate: `stage2b_gate_drawA.json`.
+
+Sidecar: 566,233,600 trainable params (14.1% of target), trained 2,200 steps (~108 min,
+2.9 s/step) with the ratio sampled per example. Evaluated on 8 draw-A documents at 4096
+tokens, 72 questions per condition.
+
+**Gate verdict: INCONCLUSIVE.** Not FAILED — but two of four PROMISING criteria missed,
+both narrowly:
+
+| criterion | threshold | measured | |
+|---|---|---|---|
+| LEARNED(4×) | ≥ 0.40 | **0.389** | miss by 0.011 |
+| LEARNED(4×) − NOCTX | ≥ 0.35 | 0.389 | pass |
+| semantic rank_margin @4× | ≥ +2.0 | **+1.66** | miss by 0.34 |
+| JOINT within 10% of LEARNED | ≤ 0.10 | 0.097 | pass |
+| *STRONG* LEARNED(8×) | ≥ 0.35 | **0.347** | miss by 0.003 |
+| *STRONG* recovery(4×) | ≥ 0.70 | 0.23 | miss |
+
+**The thresholds have not been touched.** Two of them were missed by ~1%, which is
+exactly the situation pre-registration exists to protect against.
+
+#### The primary question — does approximate-everything beat exact-some?
+
+**Yes, at every ratio, and the advantage widens as the budget shrinks.**
+
+| ratio | LEARNED | BUDGET | Δ | recovery | LEARNED_JOINT | active positions |
+|---|---|---|---|---|---|---|
+| 2× | 0.569 | 0.472 | **+0.097** | 0.20 | 0.528 | 2253 |
+| 4× | 0.389 | 0.222 | **+0.167** | 0.23 | 0.431 | 1201 |
+| 8× | 0.347 | 0.125 | **+0.222** | 0.27 | 0.250 | 677 |
+| 16× | 0.278 | 0.069 | **+0.208** | 0.23 | 0.236 | 412 |
+
+NATIVE 0.958, NOCTX 0.000. Recovery sits flat at ~0.20–0.27 — the compressor buys back
+roughly a quarter of the NATIVE−BUDGET gap regardless of ratio.
+
+#### Controls — clean
+
+| control | value | reading |
+|---|---|---|
+| RANDOM @4× | 0.014 | moment-matched noise carries nothing |
+| WRONGPAGE @4× | 0.069 | **no answer leakage** — vs LEARNED 0.389 |
+| SHUFFLE_PAGES @4× | 0.389 | identical to LEARNED |
+
+`WRONGPAGE` collapsing to near-floor is the important one: it proves the answers come
+from the compiled content and not from the question.
+
+`SHUFFLE_PAGES` being *identical* to LEARNED is a limitation, not a finding. This corpus
+places nearly every fact inside a single chunk, so page order carries almost no
+information — Stage 2a already measured raw chunk reordering at only ~5 points. **This
+corpus cannot distinguish order-sensitive from order-insensitive composition.** Stage 3
+needs facts that span page boundaries in an order-dependent way if that question is to
+be answered at all.
+
+#### Independence is nearly free — the Stage 3 signal
+
+`LEARNED_JOINT` compiles the whole document as one chunk; `LEARNED` compiles each chunk
+with no knowledge of the others. Independent compilation is *not* worse: JOINT wins
+slightly at 2× and 4× (0.431 vs 0.389), and **independent wins at 8× (0.347 vs 0.250)
+and 16× (0.278 vs 0.236)**. The likely reason JOINT degrades is that the extractor only
+ever saw ~256-token chunks in training, so a 4096-token chunk is out of distribution.
+
+#### What survives compression, and what breaks first
+
+**n = 8 per class per ratio — these are noisy. Pooled numbers (n = 72) are the reliable
+ones.** The non-monotonicity in `semantic` (0.625 at 4×, 0.750 at 16×) is noise.
+
+| fact class | NATIVE | LEARNED 4× | BUDGET 4× | verdict |
+|---|---|---|---|---|
+| semantic | 1.000 | 0.625 | 0.000 | **survives well**, BUDGET at floor |
+| composition | 0.625 | 0.375 | 0.000 | survives, BUDGET at floor |
+| url | 1.000 | 0.500 | 0.125 | survives |
+| date | 1.000 | 0.500 | 0.000 | survives |
+| proper_noun | 1.000 | 0.375 | 0.125 | partial |
+| number | 1.000 | 0.625 | 0.375 | partial |
+| path | 1.000 | 0.250 | 0.375 | **BUDGET wins** |
+| identifier | 1.000 | 0.250 | 0.750 | **BUDGET wins decisively** |
+| hash | 1.000 | **0.000** | 0.250 | **total collapse** |
+
+**This independently reproduces the phenomenon the separate `epitaxy` experiment
+reported** — approximate context preserves semantics substantially better than arbitrary
+exact strings — on a different codebase, a different corpus and a different mechanism.
+It was pre-registered as a hypothesis to test, not an expectation, and it replicated.
+
+The economically important part: the failures are **concentrated**, not uniform. Hashes
+and identifiers collapse while semantics survive, and those are exactly the classes a
+raw-page fallback would repair. That is a direct, quantified motivation for Stage 7 —
+and it is the one place this repo has something the cited literature does not report.
+
+#### Cost — cold, warm, and amortized (4096 tokens, 16 chunks)
+
+Native TTFT 3.219 s / prefill 3.569 s.
+
+| ratio | active positions | compile | warm TTFT | warm speedup | cold TTFT | breakeven |
+|---|---|---|---|---|---|---|
+| 2× | 2212 (2.0×) | 6.03 s | 0.139 s | **23.2×** | 6.17 s | m=2 |
+| 4× | 1157 (3.7×) | 5.31 s | 0.114 s | **28.2×** | 5.42 s | m=2 |
+| 8× | 629 (6.9×) | 4.87 s | 0.102 s | **31.6×** | 4.97 s | m=2 |
+| 16× | 365 (11.8×) | 4.72 s | 0.105 s | **30.6×** | 4.83 s | m=2 |
+
+**Cold is a loss and warm is a large win.** Compilation costs more than a single native
+prefill (4.7–6.0 s vs 3.6 s), so the first query against a document is *slower* than just
+prefilling it. From the **second** query onward the compiled path wins, and asymptotically
+it is ~30× cheaper per query. That is the whole economic case for this architecture, and
+it is why C²KV's practice of excluding extraction time from TTFT overstates the result.
+
+Warm TTFT is fast because composing a page is a rotation plus a concatenation — no
+forward pass over the context — followed by a short forward over ~90 tail/question tokens.
+
 **Reporting rule:** no quality number without its controls (`docs/EXPERIMENT.md` §4), and
 no speedup without cold cost, warm cost, and the amortization curve.
 
 ## 8. Next steps
 
-1. **Stage 2b — learned single-chunk compressor.** Build a C²KV-style sidecar: a shared
-   learnable compression-token embedding plus per-layer QKV projection heads over the
-   frozen target's hidden states. Enforce the three attention constraints from
-   `docs/RELATED_WORK.md` §1.1 (original-token invariance, block-local extraction with a
-   sink block, causal accumulation across compression tokens). Store KV **pre-RoPE** —
-   Stage 2a's `SHUFFLE_KV_ORDER` no-op is the direct demonstration of why.
-2. **Target the bar Stage 2a set, not `NOCTX`.** `BUDGET ≈ 1/r`, so the compressor is
-   only interesting if it beats 0.250 at 4× and 0.139 at 8×. Concretely: prove that a
-   degraded version of *every* chunk beats a perfect version of *some* chunks. If it
-   cannot, the honest conclusion is that chunk selection (Stage 6) matters more than
-   chunk compression, and the project should pivot there.
-3. Sweep 2×/4×/8×/16×. Given that training-free dropping is already at floor by 2×,
-   treat any learned result above `BUDGET` at 4× as a real signal, and expect collapse
-   somewhere between 8× and 16×.
-4. Training data must come from draw A only, and the compressor must never see a
-   question at compile time (`docs/EXPERIMENT.md` §8). Cartridges reports that a naive
-   next-token objective on the corpus is not competitive with in-context learning —
-   supervise on the answer *after* concatenation, as C²KV does.
-5. Only after Stage 2b clears its gate: Stage 3 independent compilation + composition,
-   with `JOINT`, `RANDOM`, `WRONGPAGE` and a **text-level** shuffle control.
+The Stage 2b verdict is INCONCLUSIVE, so the honest options are (a) close the ~1% gap
+with more training, or (b) accept the qualitative result and move on. **Do not silently
+do both.** Whichever is chosen must be recorded here before it is run.
+
+1. **The cheapest legitimate way to resolve INCONCLUSIVE is more training, not more
+   architecture.** Train loss was still falling at step 2200 (0.28) and validation had
+   plateaued but not regressed. A longer run at the same settings is a fair test of the
+   *same* pre-registered hypothesis; changing the architecture, the ratio schedule or the
+   corpus and re-testing against the same thresholds would not be.
+2. **Do not tune against draw A and then report draw B.** The 4× result (0.389 vs a 0.40
+   threshold) is close enough that repeated re-evaluation on draw A would amount to
+   fitting the threshold. If a second training run happens, decide the checkpoint on the
+   *validation* split, then run draw B once.
+3. **Stage 3 is partly answered already and needs a better corpus.** Independent
+   compilation is not worse than joint (and is *better* at 8× and 16×), which is the
+   main thing Stage 3 was meant to establish. But `SHUFFLE_PAGES` being identical to
+   `LEARNED` shows this corpus cannot test order-sensitive composition at all. Before
+   running Stage 3, add fact classes whose answer depends on **page order**, not just on
+   two chunks both being present.
+4. **Stage 7 now has a quantified motivation.** Compression failures are concentrated in
+   `hash` (0.000), `identifier` (0.250) and `path` (0.250) while `semantic` holds at
+   0.625. A raw-page fallback targeted at exact-risk content is the highest-value next
+   experiment in the original plan, and the per-class numbers say roughly a third of
+   pages would need it.
+5. **Stage 2c (Axis B quantization) is NOT justified yet.** Its precondition in
+   `docs/FUTURE_IDEAS.md` is a full-precision result that beats `BUDGET` — which holds —
+   *and* a gate pass, which does not. Quantizing an INCONCLUSIVE compressor would
+   confound two lossy stages.
 
 Two efficiency notes for whoever runs the next sweep:
 
@@ -299,8 +421,10 @@ Two efficiency notes for whoever runs the next sweep:
   (as `run_native_baseline.py` already does) would cut this substantially.
 - Piping a long background run through `tail` buffers all output until exit. Use `tee`
   to a log file if you want to watch progress.
+- The extractor checkpoint is 2.26 GB and is gitignored. Re-training takes ~108 min.
 
-Do not touch draw B until the final held-out evaluation.
+Do not touch draw B until the final held-out evaluation. `run_stage2b_eval.py` refuses
+`--draw B` without an explicit flag.
 
 ## 9. Repo conventions
 

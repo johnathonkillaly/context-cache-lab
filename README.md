@@ -113,6 +113,30 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ".[de
 .venv/bin/python scripts/make_tables.py --results results/raw/stage1_baseline_drawA.json
 ```
 
+```bash
+.venv/bin/python scripts/run_stage2a.py --lengths 4096,16384 --limit-docs 4
+```
+
+```bash
+.venv/bin/python scripts/smoke_stage2b.py --steps 200 --docs 2
+```
+
+```bash
+.venv/bin/python scripts/train_stage2b.py --steps 2200 --lr 5e-5
+```
+
+```bash
+.venv/bin/python scripts/run_stage2b_eval.py --limit-docs 8
+```
+
+```bash
+.venv/bin/python scripts/make_tables_s2b.py
+```
+
+```bash
+.venv/bin/python scripts/measure_stage2b_cost.py
+```
+
 `make_tables.py` exits non-zero when the Stage 1 gate fails, so the gate is a check, not
 a judgement call made in prose afterwards.
 
@@ -122,6 +146,7 @@ a judgement call made in prose afterwards.
 |---|---|
 | [`docs/EXPERIMENT.md`](docs/EXPERIMENT.md) | Protocol and **pre-registered, frozen** success criteria |
 | [`docs/RELATED_WORK.md`](docs/RELATED_WORK.md) | Literature survey; published vs. ours |
+| [`docs/STAGE2B_DESIGN.md`](docs/STAGE2B_DESIGN.md) | Sidecar design + the eight training-objective questions |
 | [`docs/FUTURE_IDEAS.md`](docs/FUTURE_IDEAS.md) | Deliberately deferred ideas + their preconditions |
 | [`AGENTS.md`](AGENTS.md) | Status, failures, results, next steps (Claude Code / Codex) |
 | `src/ccl/` | Library code |
@@ -146,7 +171,20 @@ See [`AGENTS.md`](AGENTS.md) for the full record. Short version:
     2/4/8/16×) and beats every KV heuristic at every ratio. So the real question for a
     learned compressor is sharp: **does a degraded version of every chunk beat a perfect
     version of some chunks?**
-- **Stage 2b (learned compressor) — next.** Stages 3–8 not started.
+- **Stage 2b complete — gate verdict INCONCLUSIVE** (not failed). A 566M-parameter
+  C²KV-style sidecar (14% of the target, target frozen) trained 2,200 steps.
+  - **The primary question got a yes:** approximate-everything beats exact-some at every
+    ratio, and the margin *widens* as budget shrinks — LEARNED vs BUDGET is
+    0.569/0.472 at 2×, 0.389/0.222 at 4×, 0.347/0.125 at 8×, 0.278/0.069 at 16×.
+  - **But two of four pre-registered PROMISING criteria missed by ~1%** (LEARNED@4×
+    0.389 vs 0.40; semantic rank margin +1.66 vs +2.0). **Thresholds were not moved.**
+  - Controls clean: RANDOM 0.014, WRONGPAGE 0.069 vs LEARNED 0.389 — no answer leakage.
+  - **Independent compilation is not worse than joint** — and is *better* at 8× and 16×.
+  - **Warm TTFT is 23–32× faster than native prefill; cold is slower.** Breakeven at
+    **2 queries** against the same document.
+  - **Semantics survive, exact strings do not**: `semantic` 0.625 at 4× while `hash`
+    collapses to 0.000 and `identifier` to 0.250 (where raw BUDGET wins at 0.750).
+- **Stages 3–8 not started.**
 
 ## Relationship to `epitaxy`
 
