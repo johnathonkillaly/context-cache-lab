@@ -308,8 +308,24 @@ Verify the Stage 3 artifacts against their frozen hashes (requires the local che
 
 ### Re-running the experiments
 
-Approximate wall-clock on an M4 Max. Stage 2b onward needs the trained checkpoint, which is
-**not** committed (2.26 GB) and must be retrained.
+Approximate wall-clock on an M4 Max. Stage 2b onward needs the trained sidecar, which is
+**not** committed (2.26 GB). Either retrain it (~108 min) or download the exact checkpoint
+these results were produced with:
+
+**🤗 [`jkillay/context-cache-lab-stage2b-extractor`](https://huggingface.co/jkillay/context-cache-lab-stage2b-extractor)**
+
+```bash
+.venv/bin/python -c "
+from huggingface_hub import hf_hub_download
+print(hf_hub_download('jkillay/context-cache-lab-stage2b-extractor', 'stage2b_extractor.pt',
+                      local_dir='results/raw'))"
+```
+
+That repo carries the sidecar in two forms. `stage2b_extractor.safetensors` is the one to
+load — it is safe and verified bit-exact. `stage2b_extractor.pt` is a **pickle** and is
+published only because its SHA-256 is what `results/stage3/freeze.json` pins, so
+`check_stage3_results.py` reproduces the integrity audit exactly; the repo's scripts load
+it with `weights_only=False`, so take it only if you need that verification.
 
 | Step | Command | Time |
 |---|---|---|
@@ -400,8 +416,10 @@ Code and documentation: **Apache-2.0** (see [`LICENSE`](LICENSE)). Chosen for co
 — `src/ccl/rope.py` imports `rotate_half` from Hugging Face Transformers (Apache-2.0) and
 mirrors its rotary-embedding arithmetic so re-applied positions are bit-compatible.
 
-- **No model weights are distributed here.** `Qwen/Qwen3-4B` is Apache-2.0 and is
-  downloaded by the user at run time.
+- **No model weights are distributed in this git repository.** `Qwen/Qwen3-4B` is
+  Apache-2.0 and is downloaded by the user at run time. The trained *sidecar* is published
+  separately on the [Hugging Face Hub](https://huggingface.co/jkillay/context-cache-lab-stage2b-extractor)
+  under Apache-2.0; it contains no Qwen weights.
 - **No C²KV source code was copied.** The compressor is a reimplementation from the
   published mechanism.
 - **All corpora are synthetic**, generated deterministically from integer seeds — no
